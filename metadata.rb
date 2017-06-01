@@ -1,2 +1,2 @@
-name "opsworks_cookbook_demo"
+name "chef-postgres"
 
