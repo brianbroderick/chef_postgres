@@ -1,2 +1,2 @@
-name "chef-postgres"
+name "chef_postgres"
 
