@@ -3,6 +3,6 @@
       "pgdg": {
         "release_apt_codename": "xenial"
       },
-      "version": "9.6.3" 
+      "version": "9.6" 
   }
 }
