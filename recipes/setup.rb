@@ -1,5 +1,7 @@
-codename = node.dig('postgresql', 'pgdg', 'release_apt_codename') || "xenial"
-version = node.dig('postgresql', 'version') || "9.6"
+Chef::Log.info(node.class)
+
+codename = node['postgresql']['pgdg']['release_apt_codename'] || "xenial"
+version = node['postgresql']['version'] || "9.6"
 
 apt_repository 'apt.postgresql.org' do
  uri 'http://apt.postgresql.org/pub/repos/apt'
