@@ -1,7 +1,10 @@
 Chef::Log.info(node.class)
 
-codename = node['postgresql']['pgdg']['release_apt_codename'] || "xenial"
-version = node['postgresql']['version'] || "9.6"
+node.default['postgresql']['pgdg']['release_apt_codename'] = "xenial"
+node.default['postgresql']['version'] = "9.6"
+
+codename = node['postgresql']['pgdg']['release_apt_codename']
+version = node['postgresql']['version']
 
 apt_repository 'apt.postgresql.org' do
  uri 'http://apt.postgresql.org/pub/repos/apt'
