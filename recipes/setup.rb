@@ -1,5 +1,5 @@
-codename = node['postgresql']['pgdg']['release_apt_codename'] || "xenial"
-version = node['postgresql']['version'] || "9.6"
+codename = node.dig('postgresql', 'pgdg', 'release_apt_codename') || "xenial"
+version = node.dig('postgresql', 'version') || "9.6"
 
 apt_repository 'apt.postgresql.org' do
  uri 'http://apt.postgresql.org/pub/repos/apt'
@@ -19,7 +19,7 @@ package "postgresql-contrib-#{version}"
 Chef::Log.info("** Copying Files **")
 
 cookbook_file "Copy pg_hba" do  
-  group "root"
+  group "postgres"
   mode "0640"
   owner "postgres"
   path "/etc/postgresql/#{version}/main/pg_hba.conf"
