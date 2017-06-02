@@ -4,6 +4,8 @@ node.default['postgresql']['version'] = "9.6"
 codename = node['postgresql']['pgdg']['release_apt_codename']
 version = node['postgresql']['version']
 
+Chef::Log.info("** Setting up apt_repository **")
+
 apt_repository 'apt.postgresql.org' do
  uri 'http://apt.postgresql.org/pub/repos/apt'
  distribution "#{codename}-pgdg"
@@ -32,6 +34,6 @@ end
 Chef::Log.info("** Starting Postgres **")
 
 service "Start Postgres" do
-  action :start
+  action :restart
   service_name "postgresql"  
 end
