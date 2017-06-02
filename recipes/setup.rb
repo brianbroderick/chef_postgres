@@ -15,3 +15,20 @@ package "postgresql-#{version}"
 package "postgresql-client-#{version}"
 package "postgresql-server-dev-#{version}"
 package "postgresql-contrib-#{version}"
+
+Chef::Log.info("** Copying Files **")
+
+cookbook_file "Copy pg_hba" do  
+  group "root"
+  mode "0640"
+  owner "postgres"
+  path "/etc/postgresql/#{version}/main/pg_hba.conf"
+  source "pg_hba.conf"  
+end
+
+Chef::Log.info("** Starting Postgres **")
+
+service "Start Postgres" do
+  action :start
+  service_name "postgresql"  
+end
