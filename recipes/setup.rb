@@ -1,5 +1,3 @@
-Chef::Log.info(node.class)
-
 node.default['postgresql']['pgdg']['release_apt_codename'] = "xenial"
 node.default['postgresql']['version'] = "9.6"
 
