@@ -1,8 +1,17 @@
+require "digest"
+
+admin_user_default = ::Digest::MD5.hexdigest(rand.to_s)
+admin_pass_default = ::Digest::MD5.hexdigest(rand.to_s)
+
 node.default['postgresql']['pgdg']['release_apt_codename'] = "xenial"
 node.default['postgresql']['version'] = "9.6"
+node.default['postgresql']['admin_login']['username'] = admin_user_default
+node.default['postgresql']['admin_login']['password'] = admin_pass_default
 
 codename = node['postgresql']['pgdg']['release_apt_codename']
 version = node['postgresql']['version']
+admin_user = node['postgresql']['admin_login']['username']
+admin_pass = node['postgresql']['admin_login']['password']
 
 Chef::Log.info("** Setting up apt_repository **")
 
@@ -36,4 +45,12 @@ Chef::Log.info("** Starting Postgres **")
 service "Start Postgres" do
   action :restart
   service_name "postgresql"  
+end
+
+bash "create_ops_user" do
+  user "postgres"
+  code <<-EOH
+  echo "CREATE USER #{admin_user} WITH PASSWORD '#{admin_pass}' SUPERUSER CREATEDB CREATEROLE; CREATE DATABASE #{admin_user} OWNER #{admin_user};" | psql -U postgres -d postgres
+  EOH
+  action :run  
 end
