@@ -54,3 +54,18 @@ bash "create_ops_user" do
   EOH
   action :run  
 end
+
+# Only run this, if generating the info through the defaults.
+file "Record admin info when using generated info" do
+  content "user: #{admin_user} password: #{admin_pass}"
+  group "root"
+  mode "0400"
+  owner "root"
+  path "/etc/postgresql/#{version}/main/admin_login"
+end if admin_pass_default == admin_pass
+
+# Is needed?
+# service "Restart Apparmor" do
+#   action :restart
+#   service_name "apparmor"  
+# end
