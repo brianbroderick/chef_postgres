@@ -1,6 +1,6 @@
 require "digest"
 
-admin_user_default = ::Digest::MD5.hexdigest(rand.to_s)
+admin_user_default = ::Digest::MD5.hexdigest(rand.to_s)[0,10]
 admin_pass_default = ::Digest::MD5.hexdigest(rand.to_s)
 
 node.default['postgresql']['pgdg']['release_apt_codename'] = "xenial"
