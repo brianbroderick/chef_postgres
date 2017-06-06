@@ -64,9 +64,6 @@ bash "create_ops_user" do
   action :run  
 end
 
-echo "CREATE USER 57839ecdaa WITH PASSWORD 'd20e7d2507098ef7ab0e67951b482736' SUPERUSER CREATEDB CREATEROLE; CREATE DATABASE 57839ecdaa OWNER #{admin_user};" | psql -U postgres -d postgres
-user: 57839ecdaa password: 
-
 # Only run this, if generating the info through the defaults.
 file "Record admin info when using generated info" do
   content "user: #{admin_user} password: #{admin_pass}"
