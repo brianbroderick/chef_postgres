@@ -1,5 +1,7 @@
 require "digest"
 
+version = node['postgresql']['version']
+
 first_letter = ['a','b','c','d','e','f'][rand(6)] # has to start with a letter
 admin_user_default = first_letter + ::Digest::MD5.hexdigest(rand.to_s)[0,9]
 admin_pass_default = ::Digest::MD5.hexdigest(rand.to_s)

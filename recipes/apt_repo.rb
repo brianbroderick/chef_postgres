@@ -1,8 +1,5 @@
 Chef::Log.info("** Setting up apt_repository **")
 
-node.default['postgresql']['pgdg']['release_apt_codename'] = "xenial"
-node.default['postgresql']['version'] = "9.6"
-
 codename = node['postgresql']['pgdg']['release_apt_codename']
 version = node['postgresql']['version']
 
