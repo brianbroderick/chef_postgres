@@ -1,6 +1,7 @@
 require "digest"
 
-admin_user_default = ::Digest::MD5.hexdigest(rand.to_s)[0,10]
+first_letter = ['a','b','c','d','e','f'][rand(6)] # has to start with a letter
+admin_user_default = first_letter + ::Digest::MD5.hexdigest(rand.to_s)[0,9]
 admin_pass_default = ::Digest::MD5.hexdigest(rand.to_s)
 
 node.default['postgresql']['pgdg']['release_apt_codename'] = "xenial"
@@ -62,6 +63,9 @@ bash "create_ops_user" do
   EOH
   action :run  
 end
+
+echo "CREATE USER 57839ecdaa WITH PASSWORD 'd20e7d2507098ef7ab0e67951b482736' SUPERUSER CREATEDB CREATEROLE; CREATE DATABASE 57839ecdaa OWNER #{admin_user};" | psql -U postgres -d postgres
+user: 57839ecdaa password: 
 
 # Only run this, if generating the info through the defaults.
 file "Record admin info when using generated info" do
