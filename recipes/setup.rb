@@ -40,6 +40,14 @@ cookbook_file "Copy pg_hba" do
   source "pg_hba.conf"  
 end
 
+cookbook_file "Copy postgres.conf" do  
+  group "postgres"
+  mode "0640"
+  owner "postgres"
+  path "/etc/postgresql/#{version}/main/postgresql.conf"
+  source "postgresql.conf"  
+end
+
 Chef::Log.info("** Starting Postgres **")
 
 service "Start Postgres" do
