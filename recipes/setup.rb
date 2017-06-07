@@ -1,14 +1,14 @@
-require "digest"
+# require "digest"
 
-first_letter = ['a','b','c','d','e','f'][rand(6)] # has to start with a letter
-admin_user_default = first_letter + ::Digest::MD5.hexdigest(rand.to_s)[0,9]
-admin_pass_default = ::Digest::MD5.hexdigest(rand.to_s)
+# first_letter = ['a','b','c','d','e','f'][rand(6)] # has to start with a letter
+# admin_user_default = first_letter + ::Digest::MD5.hexdigest(rand.to_s)[0,9]
+# admin_pass_default = ::Digest::MD5.hexdigest(rand.to_s)
 
-node.default['chef_postgres']['admin_login']['username'] = admin_user_default
-node.default['chef_postgres']['admin_login']['password'] = admin_pass_default
+# node.default['chef_postgres']['admin_login']['username'] = admin_user_default
+# node.default['chef_postgres']['admin_login']['password'] = admin_pass_default
 
-admin_user = node['chef_postgres']['admin_login']['username']
-admin_pass = node['chef_postgres']['admin_login']['password']
+# admin_user = node['chef_postgres']['admin_login']['username']
+# admin_pass = node['chef_postgres']['admin_login']['password']
 
 node.default['chef_postgres']['release_apt_codename'] = "xenial"
 node.default['chef_postgres']['version'] = "9.6"
@@ -58,19 +58,21 @@ service "Start Postgres" do
   service_name "postgresql"  
 end
 
-bash "create_ops_user" do
-  user "postgres"
-  code <<-EOH
-  echo "CREATE USER #{admin_user} WITH PASSWORD '#{admin_pass}' SUPERUSER CREATEDB CREATEROLE; CREATE DATABASE #{admin_user} OWNER #{admin_user};" | psql -U postgres -d postgres
-  EOH
-  action :run  
-end
+::DbUser.call(node)
 
-# Only run this, if generating the info through the defaults.
-file "Record admin info when using generated info" do
-  content "user: #{admin_user} password: #{admin_pass}"
-  group "root"
-  mode "0400"
-  owner "root"
-  path "/etc/postgresql/#{version}/main/admin_login"
-end if admin_pass_default == admin_pass
+# bash "create_ops_user" do
+#   user "postgres"
+#   code <<-EOH
+#   echo "CREATE USER #{admin_user} WITH PASSWORD '#{admin_pass}' SUPERUSER CREATEDB CREATEROLE; CREATE DATABASE #{admin_user} OWNER #{admin_user};" | psql -U postgres -d postgres
+#   EOH
+#   action :run  
+# end
+
+# # Only run this, if generating the info through the defaults.
+# file "Record admin info when using generated info" do
+#   content "user: #{admin_user} password: #{admin_pass}"
+#   group "root"
+#   mode "0400"
+#   owner "root"
+#   path "/etc/postgresql/#{version}/main/admin_login"
+# end if admin_pass_default == admin_pass
