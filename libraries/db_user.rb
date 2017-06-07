@@ -4,7 +4,7 @@ class DbUser
   attr_reader :node
 
   def self.call(*args)
-    new(*args)
+    new(*args).call
   end    
 
   def initialize(node)
