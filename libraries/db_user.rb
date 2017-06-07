@@ -1,16 +1,16 @@
 require "digest"
 
 class DbUser < Chef::Recipe
-  attr_reader :node, :version
+  attr_reader :version
 
   def self.call(*args)
     new(*args).call
   end    
 
-  def initialize(node)
-    @node = node
+  def initialize
+    # @node = node
     @version = node['chef_postgres']['version']
-    
+
     node.default['chef_postgres']['admin_login']['username'] = admin_user_default
     node.default['chef_postgres']['admin_login']['password'] = admin_pass_default
   end  
