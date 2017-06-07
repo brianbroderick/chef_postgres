@@ -58,7 +58,7 @@ service "Start Postgres" do
   service_name "postgresql"  
 end
 
-DbUser.call(node)
+DbUser.call
 
 # bash "create_ops_user" do
 #   user "postgres"

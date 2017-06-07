@@ -1,7 +1,7 @@
 require "digest"
 
 class DbUser < Chef::Recipe
-  attr_reader :node
+  attr_reader :node, :version
 
   def self.call(*args)
     new(*args).call
@@ -9,8 +9,8 @@ class DbUser < Chef::Recipe
 
   def initialize(node)
     @node = node
-
     @version = node['chef_postgres']['version']
+    
     node.default['chef_postgres']['admin_login']['username'] = admin_user_default
     node.default['chef_postgres']['admin_login']['password'] = admin_pass_default
   end  
@@ -18,22 +18,24 @@ class DbUser < Chef::Recipe
   def call
     Chef::Log.info("** Create Admin User **")
 
-    bash "create_ops_user" do
-      user "postgres"
-      code <<-EOH
-      echo "CREATE USER #{admin_user} WITH PASSWORD '#{admin_pass}' SUPERUSER CREATEDB CREATEROLE; CREATE DATABASE #{admin_user} OWNER #{admin_user};" | psql -U postgres -d postgres
-      EOH
-      action :run  
-    end
+    Chef::Log.info("u: #{admin_user}")
 
-    # Only run this, if generating the info through the defaults.
-    file "Record admin info when using generated info" do
-      content "user: #{admin_user} password: #{admin_pass}"
-      group "root"
-      mode "0400"
-      owner "root"
-      path "/etc/postgresql/#{version}/main/admin_login"
-    end if admin_pass_default == admin_pass
+    # bash "create_ops_user" do
+    #   user "postgres"
+    #   code <<-EOH
+    #   echo "CREATE USER #{admin_user} WITH PASSWORD '#{admin_pass}' SUPERUSER CREATEDB CREATEROLE; CREATE DATABASE #{admin_user} OWNER #{admin_user};" | psql -U postgres -d postgres
+    #   EOH
+    #   action :run  
+    # end
+
+    # # Only run this, if generating the info through the defaults.
+    # file "Record admin info when using generated info" do
+    #   content "user: #{admin_user} password: #{admin_pass}"
+    #   group "root"
+    #   mode "0400"
+    #   owner "root"
+    #   path "/etc/postgresql/#{version}/main/admin_login"
+    # end if admin_pass_default == admin_pass
   end 
 
   def first_letter
