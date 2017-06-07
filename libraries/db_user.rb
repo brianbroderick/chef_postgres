@@ -3,14 +3,14 @@ require "digest"
 class Chef
   class Provider 
     class DbUser < Chef::Provider::LWRPBase
-      attr_reader :version
+      attr_reader :node, :version
 
       def self.call(*args)
         new(*args).call
       end    
 
-      def initialize
-        # @node = node
+      def initialize(node)
+        @node = node
         @version = node['chef_postgres']['version']
 
         node.default['chef_postgres']['admin_login']['username'] = admin_user_default
