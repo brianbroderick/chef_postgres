@@ -6,10 +6,8 @@ The target Ubuntu version is specified in custom JSON; for example for Ubuntu 16
 ```
 {
   "postgresql":  {
-      "pgdg": {
-        "release_apt_codename": "xenial"
-      },
-      "version": "9.6" 
+    "release_apt_codename": "xenial",
+    "version": "9.6" 
   }
 }
 ```
