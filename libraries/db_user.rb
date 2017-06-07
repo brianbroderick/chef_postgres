@@ -16,7 +16,7 @@ class Chef
       end  
 
       def call
-        admin_user, admin_pass
+        return admin_user, admin_pass
       end 
 
       def first_letter
