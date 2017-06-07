@@ -3,6 +3,8 @@ require "digest"
 class Chef
   class Provider 
     class DbUser < Chef::Provider::LWRPBase
+      include Chef::Mixin::ShellOut
+      
       attr_reader :node, :version
 
       def self.call(*args)
