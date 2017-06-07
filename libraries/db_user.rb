@@ -1,6 +1,6 @@
 require "digest"
 
-class DbUser
+class DbUser < Chef::Recipe
   attr_reader :node
 
   def self.call(*args)
