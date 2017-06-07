@@ -16,7 +16,7 @@ class Chef
       end  
 
       def call
-        return admin_user, admin_pass
+        return admin_user, admin_pass, is_generated_user?
       end 
 
       def first_letter
@@ -40,7 +40,10 @@ class Chef
       def admin_pass
         @admin_pass ||= node['chef_postgres']['admin_login']['password']
       end
-  
+
+      def is_generated_user?
+        admin_pass_default == admin_pass
+      end
     end
   end
 end

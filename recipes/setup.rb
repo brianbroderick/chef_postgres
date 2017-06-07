@@ -60,7 +60,7 @@ end
 
 Chef::Log.info("** Create Admin User **")
 
-admin_user, admin_pass = Chef::Provider::DbUser.call(node)
+admin_user, admin_pass, is_generated_user = Chef::Provider::DbUser.call(node)
 
 bash "create_ops_user" do
   user "postgres"
@@ -77,4 +77,4 @@ file "Record admin info when using generated info" do
   mode "0400"
   owner "root"
   path "/etc/postgresql/#{version}/main/admin_login"
-end if admin_pass_default == admin_pass
+end if is_generated_user
