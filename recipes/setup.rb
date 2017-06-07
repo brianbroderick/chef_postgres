@@ -1,18 +1,32 @@
 require "digest"
 
-version = node['postgresql']['version']
+Hello.world
 
 first_letter = ['a','b','c','d','e','f'][rand(6)] # has to start with a letter
 admin_user_default = first_letter + ::Digest::MD5.hexdigest(rand.to_s)[0,9]
 admin_pass_default = ::Digest::MD5.hexdigest(rand.to_s)
 
-node.default['postgresql']['admin_login']['username'] = admin_user_default
-node.default['postgresql']['admin_login']['password'] = admin_pass_default
+node.default['chef_postgres']['admin_login']['username'] = admin_user_default
+node.default['chef_postgres']['admin_login']['password'] = admin_pass_default
 
-admin_user = node['postgresql']['admin_login']['username']
-admin_pass = node['postgresql']['admin_login']['password']
+admin_user = node['chef_postgres']['admin_login']['username']
+admin_pass = node['chef_postgres']['admin_login']['password']
 
-include_recipe 'chef_postgres::apt_repo'
+node.default['chef_postgres']['release_apt_codename'] = "xenial"
+node.default['chef_postgres']['version'] = "9.6"
+
+codename = node['chef_postgres']['release_apt_codename']
+version = node['chef_postgres']['version']
+
+Chef::Log.info("** Setting up apt_repository **")
+
+apt_repository 'apt.postgresql.org' do
+ uri 'http://apt.postgresql.org/pub/repos/apt'
+ distribution "#{codename}-pgdg"
+ components ['main', version]
+ key 'https://www.postgresql.org/media/keys/ACCC4CF8.asc'
+ action :add
+end
 
 Chef::Log.info("** Installing Postgres **")
 
