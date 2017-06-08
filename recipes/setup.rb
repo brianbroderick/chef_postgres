@@ -1,3 +1,4 @@
+node.default['chef_postgres']['config']['data_directory_on_separate_drive'] = true
 node.default['chef_postgres']['release_apt_codename'] = "xenial"
 node.default['chef_postgres']['version'] = "9.6"
 node.default['chef_postgres']['workload'] = "oltp"
@@ -38,7 +39,7 @@ template "postgresql.conf" do
   owner "postgres"
   path "/etc/postgresql/#{version}/main/postgresql.conf"
   source "postgresql_conf.erb" 
-  variables config: ::Chef::Provider::DbTune.call(node, node['chef_postgres']['workload'])
+  variables config: ::Chef::Provider::PgConfig.call(node)
 end
 
 # cookbook_file "Copy postgres.conf" do  

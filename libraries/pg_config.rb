@@ -3,17 +3,19 @@
 
 class Chef
   class Provider 
-    class DbTune < Chef::Provider::LWRPBase
-      attr_reader :node, :workload, :opts
+    class PgConfig < Chef::Provider::LWRPBase
+      attr_reader :node, :workload
 
       def self.call(*args)
         new(*args).call
       end 
 
-      def initialize(node, workload, opts = {})
+      def initialize(node)
         @node = node
-        @workload = workload.to_sym
-        @opts = opts
+        @workload = node['chef_postgres']['workload'].to_sym        
+
+        node.default['chef_postgres']['config']['random_page_cost'] = 3.0
+        node.default['chef_postgres']['config']['synchronous_commit'] = "on"        
       end
       
       def call
@@ -27,9 +29,21 @@ class Chef
           checkpoint_completion_target: checkpoint_completion_target, 
           default_statistics_target: default_statistics_target,
           random_page_cost: random_page_cost,
-          synchronous_commit: synchronous_commit
+          synchronous_commit: synchronous_commit,
+          data_directory: data_directory
          }
       end
+
+      def data_directory
+        node.default['chef_postgres']['config']['data_directory'] = if node['chef_postgres']['config']['data_directory_on_separate_drive']
+                                                                      "/mnt/data/postgresql/#{version}/main"
+                                                                    else
+                                                                      "/var/lib/postgresql/#{version}/main"
+                                                                    end
+                                                                    
+        node['chef_postgres']['config']['data_directory']
+      end
+      
 
       def max_connections
         { web: 200,
@@ -135,7 +149,7 @@ class Chef
             desktop: 3
           }.fetch(workload)
 
-        if node['chef_postgres']['version'].to_f >= 9.5
+        if version.to_f >= 9.5
           "max_wal_size = " + ((3 * segments) * 16).to_s + 'MB'
         else
           "checkpoint_segments = " + segments.to_s
@@ -168,7 +182,8 @@ class Chef
 
       def random_page_cost
         # The default is 4, but most recommend between 2-3 with modern drives.
-        opts[:random_page_cost] || 3.0
+
+        node['chef_postgres']['config']['random_page_cost'] 
       end
 
       def synchronous_commit 
@@ -186,11 +201,12 @@ class Chef
         # This is dangerous--a power loss could result in your database getting corrupted and not able to start again. 
         # Synchronous commit doesn't introduce the risk of corruption, which is really bad, just some risk of data loss
         
-        opts[:synchronous_commit] || "on"
+        node['chef_postgres']['config']['synchronous_commit']         
       end
       
-      
-      
+      def version
+        node['chef_postgres']['version']
+      end
     end
   end
 end
