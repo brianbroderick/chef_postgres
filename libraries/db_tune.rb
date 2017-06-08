@@ -94,7 +94,7 @@ class Chef
 
         work_mem = { web: memory_per_connection,     
                      oltp: memory_per_connection,   
-                     dw: memory_per_connection * 0.85      
+                     dw: memory_per_connection * 0.85,      
                      mixed: memory_per_connection * 0.85,    
                      desktop: memory_per_connection * 0.15  
                    }.fetch(workload)
@@ -110,7 +110,7 @@ class Chef
              oltp: memory / 16,
              dw: memory / 8,
              mixed: memory / 16,
-             desktop: memory / 16,
+             desktop: memory / 16
            }.fetch(workload), 
            1024
           ].min
