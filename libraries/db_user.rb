@@ -21,8 +21,7 @@ class Chef
 
       def first_letter
         @first_letter ||= ['a','b','c','d','e','f'][rand(6)]
-      end
-          
+      end          
 
       def admin_user_default
         # user names have to start with a letter

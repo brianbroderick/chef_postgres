@@ -1,15 +1,3 @@
-# require "digest"
-
-# first_letter = ['a','b','c','d','e','f'][rand(6)] # has to start with a letter
-# admin_user_default = first_letter + ::Digest::MD5.hexdigest(rand.to_s)[0,9]
-# admin_pass_default = ::Digest::MD5.hexdigest(rand.to_s)
-
-# node.default['chef_postgres']['admin_login']['username'] = admin_user_default
-# node.default['chef_postgres']['admin_login']['password'] = admin_pass_default
-
-# admin_user = node['chef_postgres']['admin_login']['username']
-# admin_pass = node['chef_postgres']['admin_login']['password']
-
 node.default['chef_postgres']['release_apt_codename'] = "xenial"
 node.default['chef_postgres']['version'] = "9.6"
 
@@ -43,13 +31,21 @@ cookbook_file "Copy pg_hba" do
   source "pg_hba.conf"  
 end
 
-cookbook_file "Copy postgres.conf" do  
+template "postgresql.conf" do
   group "postgres"
   mode "0640"
   owner "postgres"
   path "/etc/postgresql/#{version}/main/postgresql.conf"
-  source "postgresql.conf"  
+  source "postgresql_conf.erb" 
 end
+
+# cookbook_file "Copy postgres.conf" do  
+#   group "postgres"
+#   mode "0640"
+#   owner "postgres"
+#   path "/etc/postgresql/#{version}/main/postgresql.conf"
+#   source "postgresql.conf"  
+# end
 
 Chef::Log.info("** Starting Postgres **")
 
