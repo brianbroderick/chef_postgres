@@ -182,7 +182,7 @@ dynamic_shared_memory_type = posix      # the default is the first option
                                                 # (turning this off can cause
                                                 # unrecoverable data corruption)
 
-synchronous_commit =  <%= @config[:synchronous_commit] %>               # synchronization level;
+synchronous_commit = <%= @config[:synchronous_commit] %>               # synchronization level;
                                         # off, local, remote_write, remote_apply, or on
 #wal_sync_method = fsync                # the default is the first option
                                         # supported by the operating system:

@@ -31,8 +31,6 @@ class Chef
          }
       end
 
-      # <%= @config[:memory] %>
-
       def max_connections
         { web: 200,
           oltp: 300,
