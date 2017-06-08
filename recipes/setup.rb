@@ -1,5 +1,6 @@
 node.default['chef_postgres']['release_apt_codename'] = "xenial"
 node.default['chef_postgres']['version'] = "9.6"
+node.default['chef_postgres']['workload'] = "oltp"
 
 codename = node['chef_postgres']['release_apt_codename']
 version = node['chef_postgres']['version']
@@ -37,6 +38,7 @@ template "postgresql.conf" do
   owner "postgres"
   path "/etc/postgresql/#{version}/main/postgresql.conf"
   source "postgresql_conf.erb" 
+  variables config: ::Chef::Provider::DbTune.call(node, node['chef_postgres']['workload'])
 end
 
 # cookbook_file "Copy postgres.conf" do  
@@ -56,7 +58,7 @@ end
 
 Chef::Log.info("** Create Admin User **")
 
-admin_user, admin_pass, is_generated_user = Chef::Provider::DbUser.call(node)
+admin_user, admin_pass, is_generated_user = ::Chef::Provider::DbUser.call(node)
 
 bash "create_ops_user" do
   user "postgres"
