@@ -30,8 +30,7 @@
 #                TB = terabytes                     h   = hours
 #                                                   d   = days
 
-### Chef Ohai memory is reported at: <%= @config[:memory] %>
-
+# Chef Ohai reported memory as: <%= @config[:memory] %> MB.
 
 #------------------------------------------------------------------------------
 # FILE LOCATIONS
@@ -64,7 +63,7 @@ listen_addresses = '*'
                                         # defaults to 'localhost'; use '*' for all
                                         # (change requires restart)
 port = 5432                             # (change requires restart)
-max_connections = 100                   # (change requires restart)
+max_connections = <%= @config[:max_connections] %>                   # (change requires restart)
 #superuser_reserved_connections = 3     # (change requires restart)
 unix_socket_directories = '/var/run/postgresql' # comma-separated list of directories
                                         # (change requires restart)
@@ -113,7 +112,7 @@ ssl_key_file = '/etc/ssl/private/ssl-cert-snakeoil.key'         # (change requir
 
 # - Memory -
 
-shared_buffers = 128MB                  # min 128kB
+shared_buffers = <%= @config[:shared_buffers] %>                  # min 128kB
                                         # (change requires restart)
 #huge_pages = try                       # on, off, or try
                                         # (change requires restart)
@@ -122,8 +121,8 @@ shared_buffers = 128MB                  # min 128kB
                                         # (change requires restart)
 # Caution: it is not advisable to set max_prepared_transactions nonzero unless
 # you actively intend to use prepared transactions.
-#work_mem = 4MB                         # min 64kB
-#maintenance_work_mem = 64MB            # min 1MB
+work_mem = <%= @config[:work_memory] %>                        # min 64kB
+maintenance_work_mem = <%= @config[:maintenance_work_memory] %>           # min 1MB
 #replacement_sort_tuples = 150000       # limits use of replacement selection sort
 #autovacuum_work_mem = -1               # min 1MB, or -1 to use maintenance_work_mem
 #max_stack_depth = 2MB                  # min 100kB
@@ -182,7 +181,8 @@ dynamic_shared_memory_type = posix      # the default is the first option
 #fsync = on                             # flush data to disk for crash safety
                                                 # (turning this off can cause
                                                 # unrecoverable data corruption)
-#synchronous_commit = on                # synchronization level;
+
+synchronous_commit =  <%= @config[:synchronous_commit] %>               # synchronization level;
                                         # off, local, remote_write, remote_apply, or on
 #wal_sync_method = fsync                # the default is the first option
                                         # supported by the operating system:
@@ -206,9 +206,11 @@ dynamic_shared_memory_type = posix      # the default is the first option
 # - Checkpoints -
 
 #checkpoint_timeout = 5min              # range 30s-1d
-#max_wal_size = 1GB
+<%# This variable includes "max_wal_size =" since older versions called it "checkpoint_segments" %>
+<%= @config[:checkpoint_segments_or_max_wal_size] %>
+#max_wal_size = 1GB  
 #min_wal_size = 80MB
-#checkpoint_completion_target = 0.5     # checkpoint target duration, 0.0 - 1.0
+checkpoint_completion_target = <%= @config[:checkpoint_completion_target] %>     # checkpoint target duration, 0.0 - 1.0
 #checkpoint_flush_after = 256kB         # measured in pages, 0 disables
 #checkpoint_warning = 30s               # 0 disables
 
@@ -295,14 +297,14 @@ dynamic_shared_memory_type = posix      # the default is the first option
 # - Planner Cost Constants -
 
 #seq_page_cost = 1.0                    # measured on an arbitrary scale
-#random_page_cost = 4.0                 # same scale as above
+random_page_cost = <%= @config[:random_page_cost] %>                 # same scale as above
 #cpu_tuple_cost = 0.01                  # same scale as above
 #cpu_index_tuple_cost = 0.005           # same scale as above
 #cpu_operator_cost = 0.0025             # same scale as above
 #parallel_tuple_cost = 0.1              # same scale as above
 #parallel_setup_cost = 1000.0   # same scale as above
 #min_parallel_relation_size = 8MB
-#effective_cache_size = 4GB
+effective_cache_size = <%= @config[:effective_cache_size] %>
 
 # - Genetic Query Optimizer -
 
@@ -316,7 +318,7 @@ dynamic_shared_memory_type = posix      # the default is the first option
 
 # - Other Planner Options -
 
-#default_statistics_target = 100        # range 1-10000
+default_statistics_target = <%= @config[:default_statistics_target] %>        # range 1-10000
 #constraint_exclusion = partition       # on, off, or partition
 #cursor_tuple_fraction = 0.1            # range 0.0-1.0
 #from_collapse_limit = 8

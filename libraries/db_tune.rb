@@ -4,15 +4,16 @@
 class Chef
   class Provider 
     class DbTune < Chef::Provider::LWRPBase
-      attr_reader :node, :workload
+      attr_reader :node, :workload, :opts
 
       def self.call(*args)
         new(*args).call
       end 
 
-      def initialize(node, workload = "oltp")
-        @workload = workload.to_sym
+      def initialize(node, workload, opts = {})
         @node = node
+        @workload = workload.to_sym
+        @opts = opts
       end
       
       def call
@@ -22,10 +23,15 @@ class Chef
           effective_cache_size: effective_cache_size, 
           work_memory: work_memory, 
           maintenance_work_memory: maintenance_work_memory,
-          checkpoint_segments: checkpoint_segments,
+          checkpoint_segments_or_max_wal_size: checkpoint_segments_or_max_wal_size,
           checkpoint_completion_target: checkpoint_completion_target, 
-          default_statistics_target: default_statistics_target }
+          default_statistics_target: default_statistics_target,
+          random_page_cost: random_page_cost,
+          synchronous_commit: synchronous_commit
+         }
       end
+
+      # <%= @config[:memory] %>
 
       def max_connections
         { web: 200,
@@ -118,7 +124,7 @@ class Chef
         BinaryRound.call(maintenance_work_mem) 
       end     
 
-      def checkpoint_segments
+      def checkpoint_segments_or_max_wal_size
         # PostgreSQL writes new transactions to the database in files called WAL segments 
         # that are 16MB in size. Every time checkpoint_segments worth of these files have been written, 
         # by default 3, a checkpoint occurs.
@@ -132,9 +138,9 @@ class Chef
           }.fetch(workload)
 
         if node['chef_postgres']['version'].to_f >= 9.5
-          ((3 * segments) * 16).to_s + 'MB'
+          "max_wal_size = " + ((3 * segments) * 16).to_s + 'MB'
         else
-          segments
+          "checkpoint_segments = " + segments.to_s
         end
       end
 
@@ -161,6 +167,31 @@ class Chef
           desktop: 100
         }.fetch(workload)
       end
+
+      def random_page_cost
+        # The default is 4, but most recommend between 2-3 with modern drives.
+        opts[:random_page_cost] || 3.0
+      end
+
+      def synchronous_commit 
+        # TL;DR Turn this off to get a speed boost from your hard drives, but only in cases where it's ok to lose some data if the server loses power.
+        # For example, in idempotent workloads. "on" is the safest.
+        #
+        # From https://wiki.postgresql.org/wiki/Tuning_Your_PostgreSQL_Server:
+        # PostgreSQL can only safely use a write cache if it has a battery backup. 
+        # You may be limited to approximately 100 transaction commits per second per client in situations where you don't have such a durable write cache 
+        # (and perhaps only 500/second even with lots of clients).
+        # For situations where a small amount of data loss is acceptable in return for a large boost in how many updates you can do to the database per second, 
+        # consider switching synchronous commit off. This is particularly useful in the situation where you do not have a battery-backed write cache on your disk controller, 
+        # because you could potentially get thousands of commits per second instead of just a few hundred.
+        # For obsolete versions of PostgreSQL, you may find people recommending that you set fsync=off to speed up writes on busy systems. 
+        # This is dangerous--a power loss could result in your database getting corrupted and not able to start again. 
+        # Synchronous commit doesn't introduce the risk of corruption, which is really bad, just some risk of data loss
+        
+        opts[:synchronous_commit] || "on"
+      end
+      
+      
       
     end
   end
