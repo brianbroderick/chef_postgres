@@ -79,30 +79,30 @@ template "postgresql.conf" do
   variables config: ::Chef::Provider::PgConfig.call(node)
 end
 
-::Chef::Log.info("** Starting Postgres **")
+# ::Chef::Log.info("** Starting Postgres **")
 
-service "Start Postgres" do
-  action :start
-  service_name "postgresql"  
-end
+# service "Start Postgres" do
+#   action :start
+#   service_name "postgresql"  
+# end
 
-::Chef::Log.info("** Create Admin User **")
+# ::Chef::Log.info("** Create Admin User **")
 
-admin_user, admin_pass, is_generated_user = ::Chef::Provider::DbUser.call(node)
+# admin_user, admin_pass, is_generated_user = ::Chef::Provider::DbUser.call(node)
 
-bash "create_ops_user" do
-  user "postgres"
-  code <<-EOF_COU
-  echo "CREATE USER #{admin_user} WITH PASSWORD '#{admin_pass}' SUPERUSER CREATEDB CREATEROLE; CREATE DATABASE #{admin_user} OWNER #{admin_user};" | psql -U postgres -d postgres
-  EOF_COU
-  action :run  
-end
+# bash "create_ops_user" do
+#   user "postgres"
+#   code <<-EOF_COU
+#   echo "CREATE USER #{admin_user} WITH PASSWORD '#{admin_pass}' SUPERUSER CREATEDB CREATEROLE; CREATE DATABASE #{admin_user} OWNER #{admin_user};" | psql -U postgres -d postgres
+#   EOF_COU
+#   action :run  
+# end
 
-# Only run this, if generating the info through the defaults.
-file "Record admin info when using generated info" do
-  content "user: #{admin_user} password: #{admin_pass}"
-  group "root"
-  mode "0400"
-  owner "root"
-  path "/etc/postgresql/#{version}/main/admin_login"
-end if is_generated_user
+# # Only run this, if generating the info through the defaults.
+# file "Record admin info when using generated info" do
+#   content "user: #{admin_user} password: #{admin_pass}"
+#   group "root"
+#   mode "0400"
+#   owner "root"
+#   path "/etc/postgresql/#{version}/main/admin_login"
+# end if is_generated_user
