@@ -12,17 +12,7 @@ node.default['chef_postgres']['pg_config']['data_directory'] = if node['chef_pos
                                                                       "/var/lib/postgresql/#{version}/main"
                                                                     end
 
-Chef::Log.info("** Creating Data Directory **")
-
-directory node['chef_postgres']['pg_config']['data_directory'] do
-  owner 'postgres'
-  group 'postgres'
-  mode '0700'
-  recursive true
-  action :create
-end
-
-Chef::Log.info("** Setting up apt_repository **")
+::Chef::Log.info("** Setting up apt_repository **")
 
 apt_repository 'apt.postgresql.org' do
  uri 'http://apt.postgresql.org/pub/repos/apt'
@@ -32,14 +22,37 @@ apt_repository 'apt.postgresql.org' do
  action :add
 end
 
-Chef::Log.info("** Installing Postgres **")
+::Chef::Log.info("** Installing Postgres **")
 
 package "postgresql-#{version}"
 package "postgresql-client-#{version}"
 package "postgresql-server-dev-#{version}"
 package "postgresql-contrib-#{version}"
 
-Chef::Log.info("** Copying Files **")
+if node.default['chef_postgres']['pg_config']['data_directory_on_separate_drive']
+
+  ::Chef::Log.info("** Creating Data Directory **")
+
+  directory node['chef_postgres']['pg_config']['data_directory'] do
+    owner 'postgres'
+    group 'postgres'
+    mode '0700'
+    recursive true
+    action :create
+  end
+
+  bash "move_data_directory" do
+    code <<-EOF_MDD    
+    mv /var/lib/postgresql/#{version}/main/* #{node['chef_postgres']['pg_config']['data_directory']}
+    EOF_MDD
+    not_if { ::File.exist?("#{node['chef_postgres']['pg_config']['data_directory']}/PG_VERSION") }
+    user "postgres"
+    action :run
+  end
+
+end
+
+::Chef::Log.info("** Copying Files **")
 
 cookbook_file "Copy pg_hba" do  
   group "postgres"
@@ -66,22 +79,22 @@ end
 #   source "postgresql.conf"  
 # end
 
-Chef::Log.info("** Starting Postgres **")
+::Chef::Log.info("** Starting Postgres **")
 
 service "Start Postgres" do
   action :restart
   service_name "postgresql"  
 end
 
-Chef::Log.info("** Create Admin User **")
+::Chef::Log.info("** Create Admin User **")
 
 admin_user, admin_pass, is_generated_user = ::Chef::Provider::DbUser.call(node)
 
 bash "create_ops_user" do
   user "postgres"
-  code <<-EOH
+  code <<-EOF_COU
   echo "CREATE USER #{admin_user} WITH PASSWORD '#{admin_pass}' SUPERUSER CREATEDB CREATEROLE; CREATE DATABASE #{admin_user} OWNER #{admin_user};" | psql -U postgres -d postgres
-  EOH
+  EOF_COU
   action :run  
 end
 
