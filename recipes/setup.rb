@@ -29,8 +29,14 @@ package "postgresql-client-#{version}"
 package "postgresql-server-dev-#{version}"
 package "postgresql-contrib-#{version}"
 
-if node.default['chef_postgres']['pg_config']['data_directory_on_separate_drive']
+::Chef::Log.info("** Stop Postgres **")
 
+service "Stop Postgres" do
+  action :stop
+  service_name "postgresql"  
+end
+
+if node.default['chef_postgres']['pg_config']['data_directory_on_separate_drive']
   ::Chef::Log.info("** Creating Data Directory **")
 
   directory node['chef_postgres']['pg_config']['data_directory'] do
@@ -49,7 +55,6 @@ if node.default['chef_postgres']['pg_config']['data_directory_on_separate_drive'
     user "postgres"
     action :run
   end
-
 end
 
 ::Chef::Log.info("** Copying Files **")
@@ -71,18 +76,10 @@ template "postgresql.conf" do
   variables config: ::Chef::Provider::PgConfig.call(node)
 end
 
-# cookbook_file "Copy postgres.conf" do  
-#   group "postgres"
-#   mode "0640"
-#   owner "postgres"
-#   path "/etc/postgresql/#{version}/main/postgresql.conf"
-#   source "postgresql.conf"  
-# end
-
 ::Chef::Log.info("** Starting Postgres **")
 
 service "Start Postgres" do
-  action :restart
+  action :start
   service_name "postgresql"  
 end
 
