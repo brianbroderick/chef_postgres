@@ -40,10 +40,9 @@ class Chef
                                                                     else
                                                                       "/var/lib/postgresql/#{version}/main"
                                                                     end
-                                                                    
+
         node['chef_postgres']['config']['data_directory']
-      end
-      
+      end     
 
       def max_connections
         { web: 200,
