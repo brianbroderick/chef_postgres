@@ -14,8 +14,8 @@ class Chef
         @node = node
         @workload = node['chef_postgres']['workload'].to_sym        
 
-        node.default['chef_postgres']['config']['random_page_cost'] = 3.0
-        node.default['chef_postgres']['config']['synchronous_commit'] = "on"        
+        node.default['chef_postgres']['pg_config']['random_page_cost'] = 3.0
+        node.default['chef_postgres']['pg_config']['synchronous_commit'] = "on"        
       end
       
       def call
@@ -35,13 +35,7 @@ class Chef
       end
 
       def data_directory
-        node.default['chef_postgres']['config']['data_directory'] = if node['chef_postgres']['config']['data_directory_on_separate_drive']
-                                                                      "/mnt/data/postgresql/#{version}/main"
-                                                                    else
-                                                                      "/var/lib/postgresql/#{version}/main"
-                                                                    end
-
-        node['chef_postgres']['config']['data_directory']
+        node['chef_postgres']['pg_config']['data_directory']
       end     
 
       def max_connections
@@ -182,7 +176,7 @@ class Chef
       def random_page_cost
         # The default is 4, but most recommend between 2-3 with modern drives.
 
-        node['chef_postgres']['config']['random_page_cost'] 
+        node['chef_postgres']['pg_config']['random_page_cost'] 
       end
 
       def synchronous_commit 
@@ -200,7 +194,7 @@ class Chef
         # This is dangerous--a power loss could result in your database getting corrupted and not able to start again. 
         # Synchronous commit doesn't introduce the risk of corruption, which is really bad, just some risk of data loss
         
-        node['chef_postgres']['config']['synchronous_commit']         
+        node['chef_postgres']['pg_config']['synchronous_commit']         
       end
       
       def version

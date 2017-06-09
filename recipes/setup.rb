@@ -1,10 +1,26 @@
-node.default['chef_postgres']['config']['data_directory_on_separate_drive'] = true
 node.default['chef_postgres']['release_apt_codename'] = "xenial"
 node.default['chef_postgres']['version'] = "9.6"
 node.default['chef_postgres']['workload'] = "oltp"
 
 codename = node['chef_postgres']['release_apt_codename']
 version = node['chef_postgres']['version']
+
+node.default['chef_postgres']['pg_config']['data_directory_on_separate_drive'] = true
+node.default['chef_postgres']['pg_config']['data_directory'] = if node['chef_postgres']['pg_config']['data_directory_on_separate_drive']
+                                                                      "/mnt/data/postgresql/#{version}/main"
+                                                                    else
+                                                                      "/var/lib/postgresql/#{version}/main"
+                                                                    end
+
+Chef::Log.info("** Creating Data Directory **")
+
+directory node['chef_postgres']['pg_config']['data_directory'] do
+  owner 'postgres'
+  group 'postgres'
+  mode '0700'
+  recursive true
+  action :create
+end
 
 Chef::Log.info("** Setting up apt_repository **")
 
