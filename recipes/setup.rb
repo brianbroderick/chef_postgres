@@ -77,7 +77,7 @@ bash "move_data_directory" do
   only_if { node['chef_postgres']['pg_config']['data_directory_on_separate_drive'] }
   user "postgres"
   # action :nothing
-  action :run
+  action :nothing
 end
 
 ::Chef::Log.info("** Copying Files **")
