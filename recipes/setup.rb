@@ -67,8 +67,20 @@ service "Stop Postgres" do
   action :stop
   service_name "postgresql"  
   notifies :run, 'ruby_block[log_stop_pg]', :before
-  notifies :run, 'ruby_block[wait_for_pg_stop]', :immediately
+  # notifies :run, 'ruby_block[wait_for_pg_stop]', :immediately
 end
+
+## Wait for PG to fully stop and remove its PID
+attempts = 0
+until !::File.exist?("/var/lib/postgresql/#{version}/main/postmaster.pid") do
+  attempts += 1
+  ::Chef::Log.info("** Waiting for Postgres to Stop. Attempts: #{attempts.to_s} **")
+  sleep(0.1) 
+  if attempts >= 150
+    ::Chef::Log.info("** Waited 15 seconds... moving on. **")
+    break
+  end      
+end 
 
 ruby_block 'wait_for_pg_stop' do
   block do
@@ -83,8 +95,9 @@ ruby_block 'wait_for_pg_stop' do
       end      
     end      
   end
-  action :nothing
-  notifies :run, 'bash[move_data_directory]', :immediately
+  # action :nothing
+  action :run
+  # notifies :run, 'bash[move_data_directory]', :immediately
 end
 
 bash "move_data_directory" do
@@ -94,16 +107,18 @@ bash "move_data_directory" do
   not_if { ::File.exist?("#{node['chef_postgres']['pg_config']['data_directory']}/PG_VERSION") }
   only_if { node['chef_postgres']['pg_config']['data_directory_on_separate_drive'] }
   user "postgres"  
-  action :nothing
+  # action :nothing
+  action :run
   notifies :run, 'ruby_block[log_move_data_directory]', :before
-  notifies :start, 'service[start_postgres]', :immediately  
+  # notifies :start, 'service[start_postgres]', :immediately  
 end
 
 service "start_postgres" do
-  action :nothing
+  # action :nothing
+  action :start
   service_name "postgresql"  
   notifies :run, 'ruby_block[log_start_pg]', :before
-  notifies :run, 'bash[create_ops_user]', :immediately  
+  # notifies :run, 'bash[create_ops_user]', :immediately  
 end
 
 admin_user, admin_pass, is_generated_user = ::Chef::Provider::DbUser.call(node)
@@ -113,9 +128,10 @@ bash "create_ops_user" do
   code <<-EOF_COU
   echo "CREATE USER #{admin_user} WITH PASSWORD '#{admin_pass}' SUPERUSER CREATEDB CREATEROLE; CREATE DATABASE #{admin_user} OWNER #{admin_user};" | psql -U postgres -d postgres
   EOF_COU
-  action :nothing  
+  # action :nothing  
+  action :run
   notifies :run, 'ruby_block[log_create_admin]', :before
-  notifies :create, 'file[record_admin]', :immediately     
+  # notifies :create, 'file[record_admin]', :immediately     
 end
 
 # Only run this, if generating the info through the defaults.
@@ -124,8 +140,9 @@ file "record_admin" do
   group "root"
   mode "0400"
   owner "root"
-  path "/etc/postgresql/#{version}/main/admin_login"
-  action :nothing
+  path "#{node['chef_postgres']['pg_config']['data_directory']}/admin_login"
+  # action :nothing
+  action :create
 end if is_generated_user
 
 ### Logging ###
