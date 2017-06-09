@@ -1,3 +1,7 @@
+### Using 'notifies' on a lot of the directives since PG deletes a pid when it's stopped.  
+### This was causing issues when moving the data directory.  
+### notifies, along with a ruby_block that waits until the pid is deleted fixes the issue.
+
 node.default['chef_postgres']['release_apt_codename'] = "xenial"
 node.default['chef_postgres']['version'] = "9.6"
 node.default['chef_postgres']['workload'] = "oltp"
@@ -73,8 +77,8 @@ ruby_block 'wait_for_pg_stop' do
       attempts += 1
       ::Chef::Log.info("** Waiting for Postgres to Stop. Attempts: #{attempts.to_s} **")
       sleep(0.1) 
-      if attempts >= 100
-        ::Chef::Log.info("** Waited 10 seconds... moving on. **")
+      if attempts >= 150
+        ::Chef::Log.info("** Waited 15 seconds... moving on. **")
         break
       end      
     end      
