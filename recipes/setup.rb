@@ -45,10 +45,27 @@ end
 service "Stop Postgres" do
   action :stop
   service_name "postgresql"  
+  notifies :run, 'ruby_block[wait_for_pg_stop]', :immediately
+end
+
+ruby_block 'wait_for_pg_stop' do
+  block do
+    attempts = 0
+    until !::File.exist?("/var/lib/postgresql/#{version}/main/postmaster.pid") do
+      attempts += 1
+      ::Chef::Log.info("** Waiting for Postgres to Stop. Attempts: #{attempts.to_s} **")
+      sleep(0.1) 
+      if attempts >= 100
+        ::Chef::Log.info("** Waited 10 seconds... moving on. **")
+        break
+      end      
+    end      
+  end
+  action :nothing
   notifies :run, 'bash[move_data_directory]', :immediately
 end
 
-# only_if { until !::File.exist?("/var/lib/postgresql/#{version}/main/postmaster.pid") { sleep(0.1) } }
+# only_if {  }
 
 ::Chef::Log.info("** Moving Data Directory **")
 
@@ -59,8 +76,8 @@ bash "move_data_directory" do
   not_if { ::File.exist?("#{node['chef_postgres']['pg_config']['data_directory']}/PG_VERSION") }
   only_if { node['chef_postgres']['pg_config']['data_directory_on_separate_drive'] }
   user "postgres"
-  action :nothing
-  # action :run
+  # action :nothing
+  action :run
 end
 
 ::Chef::Log.info("** Copying Files **")
