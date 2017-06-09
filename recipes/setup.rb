@@ -52,6 +52,9 @@ if node.default['chef_postgres']['pg_config']['data_directory_on_separate_drive'
     mv /var/lib/postgresql/#{version}/main/* #{node['chef_postgres']['pg_config']['data_directory']}
     EOF_MDD
     not_if { ::File.exist?("#{node['chef_postgres']['pg_config']['data_directory']}/PG_VERSION") }
+    only_if do 
+              until !::File.exist?("/var/lib/postgresql/#{version}/main/postmaster.pid") { sleep(0.1) }
+            end
     user "postgres"
     action :run
   end
