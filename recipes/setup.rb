@@ -37,7 +37,7 @@ directory node['chef_postgres']['pg_config']['data_directory'] do
   mode '0700'
   recursive true
   action :create
-  only_if node['chef_postgres']['pg_config']['data_directory_on_separate_drive']
+  only_if { node['chef_postgres']['pg_config']['data_directory_on_separate_drive'] }
 end
 
 ::Chef::Log.info("** Stop Postgres **")
@@ -57,7 +57,7 @@ bash "move_data_directory" do
   mv /var/lib/postgresql/#{version}/main/* #{node['chef_postgres']['pg_config']['data_directory']}
   EOF_MDD
   not_if { ::File.exist?("#{node['chef_postgres']['pg_config']['data_directory']}/PG_VERSION") }
-  only_if node['chef_postgres']['pg_config']['data_directory_on_separate_drive']  
+  only_if { node['chef_postgres']['pg_config']['data_directory_on_separate_drive'] }
   user "postgres"
   action :nothing
   # action :run
