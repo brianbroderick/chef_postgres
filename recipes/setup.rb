@@ -29,33 +29,38 @@ package "postgresql-client-#{version}"
 package "postgresql-server-dev-#{version}"
 package "postgresql-contrib-#{version}"
 
+::Chef::Log.info("** Creating Data Directory **")
+
+directory node['chef_postgres']['pg_config']['data_directory'] do
+  owner 'postgres'
+  group 'postgres'
+  mode '0700'
+  recursive true
+  action :create
+  only_if node['chef_postgres']['pg_config']['data_directory_on_separate_drive']
+end
+
 ::Chef::Log.info("** Stop Postgres **")
 
 service "Stop Postgres" do
   action :stop
   service_name "postgresql"  
+  notifies :run, 'bash[move_data_directory]', :immediately
 end
 
-if node.default['chef_postgres']['pg_config']['data_directory_on_separate_drive']
-  ::Chef::Log.info("** Creating Data Directory **")
+# only_if { until !::File.exist?("/var/lib/postgresql/#{version}/main/postmaster.pid") { sleep(0.1) } }
 
-  directory node['chef_postgres']['pg_config']['data_directory'] do
-    owner 'postgres'
-    group 'postgres'
-    mode '0700'
-    recursive true
-    action :create
-  end
+::Chef::Log.info("** Moving Data Directory **")
 
-  bash "move_data_directory" do
-    code <<-EOF_MDD    
-    mv /var/lib/postgresql/#{version}/main/* #{node['chef_postgres']['pg_config']['data_directory']}
-    EOF_MDD
-    not_if { ::File.exist?("#{node['chef_postgres']['pg_config']['data_directory']}/PG_VERSION") }
-    only_if { until !::File.exist?("/var/lib/postgresql/#{version}/main/postmaster.pid") { sleep(0.1) } }
-    user "postgres"
-    action :run
-  end
+bash "move_data_directory" do
+  code <<-EOF_MDD    
+  mv /var/lib/postgresql/#{version}/main/* #{node['chef_postgres']['pg_config']['data_directory']}
+  EOF_MDD
+  not_if { ::File.exist?("#{node['chef_postgres']['pg_config']['data_directory']}/PG_VERSION") }
+  only_if node['chef_postgres']['pg_config']['data_directory_on_separate_drive']  
+  user "postgres"
+  action :nothing
+  # action :run
 end
 
 ::Chef::Log.info("** Copying Files **")
