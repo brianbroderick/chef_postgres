@@ -79,7 +79,7 @@ class Chef
           buffers = [buffers, 8192].min 
         end
         
-        BinaryRound.call(buffers)
+        ::BinaryRound.call(buffers)
       end
 
       def effective_cache_size
@@ -94,7 +94,7 @@ class Chef
                   desktop: memory / 4
                 }.fetch(workload)
 
-        BinaryRound.call(cache)
+        ::BinaryRound.call(cache)
       end
 
       def work_memory
@@ -110,7 +110,7 @@ class Chef
                      desktop: memory_per_connection * 0.15  
                    }.fetch(workload)
 
-        BinaryRound.call(work_mem)                   
+        ::BinaryRound.call(work_mem)                   
       end
 
       def maintenance_work_memory
@@ -126,7 +126,7 @@ class Chef
            1024
           ].min
 
-        BinaryRound.call(maintenance_work_mem) 
+        ::BinaryRound.call(maintenance_work_mem) 
       end     
 
       def checkpoint_segments_or_max_wal_size

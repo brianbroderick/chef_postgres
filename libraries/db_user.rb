@@ -3,16 +3,17 @@ require "digest"
 class Chef
   class Provider 
     class DbUser < Chef::Provider::LWRPBase
-      attr_reader :node
+      attr_reader :node, :login
 
       def self.call(*args)
         new(*args).call
       end    
 
-      def initialize(node)
+      def initialize(node, login = "admin_login")
         @node = node
-        node.default['chef_postgres']['admin_login']['username'] = admin_user_default
-        node.default['chef_postgres']['admin_login']['password'] = admin_pass_default
+        @login = login
+        node.default['chef_postgres'][login]['username'] = admin_user_default
+        node.default['chef_postgres'][login]['password'] = admin_pass_default
       end  
 
       def call
@@ -33,11 +34,11 @@ class Chef
       end
 
       def admin_user
-        @admin_user ||= node['chef_postgres']['admin_login']['username']
+        @admin_user ||= node['chef_postgres'][login]['username']
       end
       
       def admin_pass
-        @admin_pass ||= node['chef_postgres']['admin_login']['password']
+        @admin_pass ||= node['chef_postgres'][login]['password']
       end
 
       def is_generated_user?

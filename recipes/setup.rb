@@ -17,6 +17,9 @@ node.default['chef_postgres']['pg_config']['data_directory'] = if node['chef_pos
                                                                  "/var/lib/postgresql/#{version}/main"
                                                                end
 
+admin_user, admin_pass, admin_is_generated = ::Chef::Provider::DbUser.call(node, "admin_login")   
+repl_user, repl_pass, repl_is_generated = ::Chef::Provider::DbUser.call(node, "repl_login")                                                            
+
 ::Chef::Log.info("** Setting up apt_repository to get access to the latest PG versions **")
 
 apt_repository 'apt.postgresql.org' do
@@ -34,7 +37,6 @@ package "postgresql-client-#{version}"
 package "postgresql-server-dev-#{version}"
 package "postgresql-contrib-#{version}"
 
-# Create data directory
 directory node['chef_postgres']['pg_config']['data_directory'] do
   owner 'postgres'
   group 'postgres'
@@ -45,12 +47,13 @@ directory node['chef_postgres']['pg_config']['data_directory'] do
   notifies :run, 'ruby_block[log_data_directory]', :before
 end
 
-cookbook_file "Copy pg_hba" do  
+template "pg_hba.conf" do  
   group "postgres"
   mode "0640"
   owner "postgres"
   path "/etc/postgresql/#{version}/main/pg_hba.conf"
-  source "pg_hba.conf" 
+  source "pg_hba_conf.erb"
+  variables config: { repl_user: repl_user } 
   notifies :run, 'ruby_block[log_copy_files]', :before
 end
 
@@ -63,7 +66,7 @@ template "postgresql.conf" do
   variables config: ::Chef::Provider::PgConfig.call(node)
 end
 
-service "Stop Postgres" do
+service "stop_postgres" do
   action :stop
   service_name "postgresql"  
   notifies :run, 'ruby_block[log_stop_pg]', :before  
@@ -98,13 +101,11 @@ service "start_postgres" do
   notifies :run, 'ruby_block[log_start_pg]', :before  
 end
 
-admin_user, admin_pass, is_generated_user = ::Chef::Provider::DbUser.call(node)
-
-bash "create_ops_user" do
+bash "create_admin_user" do
   user "postgres"
-  code <<-EOF_COU
+  code <<-EOF_CAU
   echo "CREATE USER #{admin_user} WITH PASSWORD '#{admin_pass}' SUPERUSER CREATEDB CREATEROLE; CREATE DATABASE #{admin_user} OWNER #{admin_user};" | psql -U postgres -d postgres
-  EOF_COU
+  EOF_CAU
   action :run
   notifies :run, 'ruby_block[log_create_admin]', :before  
 end
@@ -117,7 +118,26 @@ file "record_admin" do
   owner "root"
   path "/etc/postgresql/#{version}/main/admin_login"  
   action :create
-end if is_generated_user
+end if admin_is_generated
+
+bash "create_repl_user" do
+  user "postgres"
+  code <<-EOF_CRU
+  echo "CREATE USER #{repl_user} WITH PASSWORD '#{repl_pass}' REPLICATION LOGIN CONNECTION LIMIT 2;" | psql -U postgres -d postgres
+  EOF_CRU
+  action :run
+  notifies :run, 'ruby_block[log_create_repl]', :before  
+end
+
+# Only run this, if generating the info through the defaults.
+file "record_admin" do
+  content "user: #{admin_user} password: #{admin_pass}"
+  group "root"
+  mode "0400"
+  owner "root"
+  path "/etc/postgresql/#{version}/main/admin_login"  
+  action :create
+end if admin_is_generated
 
 ### Logging ###
 
@@ -148,5 +168,10 @@ end
 
 ruby_block 'log_create_admin' do
   block { ::Chef::Log.info("** Create Admin User **") }
+  action :nothing
+end
+
+ruby_block 'log_create_repl' do
+  block { ::Chef::Log.info("** Create Repl User **") }
   action :nothing
 end
