@@ -40,6 +40,12 @@ package "postgresql-client-#{version}"
 package "postgresql-server-dev-#{version}"
 package "postgresql-contrib-#{version}"
 
+service "stop_postgres" do
+  action :stop
+  service_name "postgresql"  
+  notifies :run, 'ruby_block[log_stop_pg]', :before  
+end
+
 directory node['chef_postgres']['pg_config']['data_directory'] do
   owner 'postgres'
   group 'postgres'
@@ -72,26 +78,35 @@ template "postgresql.conf" do
                     } 
 end
 
-service "stop_postgres" do
-  action :stop
-  service_name "postgresql"  
-  notifies :run, 'ruby_block[log_stop_pg]', :before  
-end
-
-## Wait for PG to fully stop and remove its PID
-attempts = 0
-until !::File.exist?("/var/lib/postgresql/#{version}/main/postmaster.pid") do
-  attempts += 1
-  ::Chef::Log.info("** Waiting for Postgres to Stop. Attempts: #{attempts.to_s} **")
-  sleep(0.1) 
-  if attempts >= 150
-    ::Chef::Log.info("** Waited 15 seconds... moving on. **")
-    break
-  end      
-end 
+# ## Wait for PG to fully stop and remove its PID
+# attempts = 0
+# if ::File.exist?("/var/lib/postgresql/#{version}/main/postmaster.pid")
+#   ::Chef::Log.info("** Waiting for Postgres to Stop. **")
+# end
+# until !::File.exist?("/var/lib/postgresql/#{version}/main/postmaster.pid") do
+#   attempts += 1
+#   sleep(0.1) 
+#   ::Chef::Log.info("** Waiting for Postgres to Stop. Waited: #{(attempts * 0.1).to_s} seconds **")  
+#   if attempts >= 150
+#     ::Chef::Log.info("** Waited 15 seconds... moving on. **")
+#     break
+#   end      
+# end 
 
 bash "move_data_directory" do
-  code <<-EOF_MDD    
+  code <<-EOF_MDD   
+  TIME_DELAY = 0.1
+  WAITED = 0  
+  until [ ! -f /var/lib/postgresql/#{version}/main/postmaster.pid ]; do
+    sleep $TIME_DELAY
+    $WAITED = $(($WAITED + $TIME_DELAY))    
+    echo "** Waiting for Postgres to Stop. Waited: $WAITED seconds **" >> ~/bash.log
+    if [ $WAITED -gt 15 ] 
+    then
+      echo "** Waiting long enough... **" >> ~/bash.log
+      break
+    fi
+  done 
   mv /var/lib/postgresql/#{version}/main/* #{node['chef_postgres']['pg_config']['data_directory']}
   EOF_MDD
   not_if { ::File.exist?("#{node['chef_postgres']['pg_config']['data_directory']}/PG_VERSION") }
