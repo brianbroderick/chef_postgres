@@ -176,6 +176,10 @@ dynamic_shared_memory_type = posix      # the default is the first option
 
 # - Settings -
 
+<% if @repl[:pg_node] == "master" && %w(warm_standby hot_standby).include?(@repl[:cluster_type]) %>
+wal_level = replica
+<% end %>
+
 #wal_level = minimal                    # minimal, replica, or logical
                                         # (change requires restart)
 #fsync = on                             # flush data to disk for crash safety
@@ -216,8 +220,18 @@ checkpoint_completion_target = <%= @config[:checkpoint_completion_target] %>    
 
 # - Archiving -
 
+<% if @repl[:pg_node] == "master" && %w(warm_standby hot_standby).include?(@repl[:cluster_type]) %>
+archive_mode = on
+<% end %>
+
 #archive_mode = off             # enables archiving; off, on, or always
                                 # (change requires restart)
+
+<% if @repl[:pg_node] == "master" && %w(warm_standby hot_standby).include?(@repl[:cluster_type]) %>
+archive_command = 'cd .'
+<% end %>
+
+
 #archive_command = ''           # command to use to archive a logfile segment
                                 # placeholders: %p = path of file to archive
                                 #               %f = file name only
@@ -234,9 +248,19 @@ checkpoint_completion_target = <%= @config[:checkpoint_completion_target] %>    
 
 # Set these on the master and on any standby that will send replication data.
 
+<% if @repl[:pg_node] == "master" && %w(warm_standby hot_standby).include?(@repl[:cluster_type]) %>
+max_wal_senders = 4  # number of nodes + 2 (for possible reconnection attempts)
+<% end %>
+
 #max_wal_senders = 0            # max number of walsender processes
                                 # (change requires restart)
 #wal_keep_segments = 0          # in logfile segments, 16MB each; 0 disables
+
+<% if @repl[:pg_node] == "master" && %w(warm_standby hot_standby).include?(@repl[:cluster_type]) %>
+# wal_keep_segments = 0 
+<% end %>
+
+
 #wal_sender_timeout = 60s       # in milliseconds; 0 disables
 
 #max_replication_slots = 0      # max number of replication slots
@@ -425,7 +449,10 @@ default_statistics_target = <%= @config[:default_statistics_target] %>        # 
 #debug_print_plan = off
 #debug_pretty_print = on
 #log_checkpoints = off
-#log_connections = off
+
+### Changed to "on"
+log_connections = on
+
 #log_disconnections = off
 #log_duration = off
 #log_error_verbosity = default          # terse, default, or verbose messages

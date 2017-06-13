@@ -127,7 +127,18 @@ class Chef
           ].min
 
         ::BinaryRound.call(maintenance_work_mem) 
-      end     
+      end   
+
+      def wal_keep_segments
+        # For streaming relication        
+          { web: 8,
+            oltp: 16,
+            dw: 64,
+            mixed: 16,
+            desktop: 3
+          }.fetch(workload) * 3
+      end
+        
 
       def checkpoint_segments_or_max_wal_size
         # PostgreSQL writes new transactions to the database in files called WAL segments 

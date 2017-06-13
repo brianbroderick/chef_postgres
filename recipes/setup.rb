@@ -2,6 +2,8 @@
 ### This was causing issues when moving the data directory.  
 ### notifies, along with a ruby_block that waits until the pid is deleted fixes the issue.
 
+::Chef::Log.info(node['filesystem'])
+
 node.default['chef_postgres']['release_apt_codename'] = "xenial"
 node.default['chef_postgres']['version'] = "9.6"
 node.default['chef_postgres']['workload'] = "oltp"
@@ -16,6 +18,9 @@ node.default['chef_postgres']['pg_config']['data_directory'] = if node['chef_pos
                                                                else
                                                                  "/var/lib/postgresql/#{version}/main"
                                                                end
+
+node.default['chef_postgres']['pg_config']['cluster_type'] = "hot_standby"  # opts: standalone, warm_standby, hot_standby    
+node.default['chef_postgres']['pg_config']['pg_node'] = "master" # opts: master, standby                                                           
 
 admin_user, admin_pass, admin_is_generated = ::Chef::Provider::DbUser.call(node, "admin_login")   
 repl_user, repl_pass, repl_is_generated = ::Chef::Provider::DbUser.call(node, "repl_login")                                                            
@@ -64,6 +69,8 @@ template "postgresql.conf" do
   path "/etc/postgresql/#{version}/main/postgresql.conf"
   source "postgresql_conf.erb" 
   variables config: ::Chef::Provider::PgConfig.call(node)
+  variables repl: { cluster_type: node['chef_postgres']['pg_config']['cluster_type'],
+                    pg_node: node['chef_postgres']['pg_config']['pg_node'] }  
 end
 
 service "stop_postgres" do
@@ -123,21 +130,21 @@ end if admin_is_generated
 bash "create_repl_user" do
   user "postgres"
   code <<-EOF_CRU
-  echo "CREATE USER #{repl_user} WITH PASSWORD '#{repl_pass}' REPLICATION LOGIN CONNECTION LIMIT 2;" | psql -U postgres -d postgres
+  echo "CREATE USER #{repl_user} WITH PASSWORD '#{repl_pass}' REPLICATION LOGIN CONNECTION LIMIT 4;" | psql -U postgres -d postgres
   EOF_CRU
   action :run
   notifies :run, 'ruby_block[log_create_repl]', :before  
 end
 
 # Only run this, if generating the info through the defaults.
-file "record_admin" do
-  content "user: #{admin_user} password: #{admin_pass}"
+file "record_repl" do
+  content "user: #{repl_user} password: #{repl_pass}"
   group "root"
   mode "0400"
   owner "root"
-  path "/etc/postgresql/#{version}/main/admin_login"  
+  path "/etc/postgresql/#{version}/main/repl_login"  
   action :create
-end if admin_is_generated
+end if repl_is_generated
 
 ### Logging ###
 
