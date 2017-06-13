@@ -30,7 +30,8 @@ class Chef
           default_statistics_target: default_statistics_target,
           random_page_cost: random_page_cost,
           synchronous_commit: synchronous_commit,
-          data_directory: data_directory
+          data_directory: data_directory,
+          wal_keep_segments: wal_keep_segments
          }
       end
 
@@ -130,13 +131,17 @@ class Chef
       end   
 
       def wal_keep_segments
-        # For streaming relication        
-          { web: 8,
-            oltp: 16,
-            dw: 64,
-            mixed: 16,
-            desktop: 3
-          }.fetch(workload) * 3
+        # Convert to modifier % of available disk space on log drive in MB, then divide by 16MB      
+        # If log location becomes configurable, the drive needs to also become configurable 
+        
+        modifier = { web: 0.50,
+          oltp: 0.50,
+          dw: 0.50,
+          mixed: 0.50,
+          desktop: 0.25
+        }.fetch(workload)
+
+        (node['filesystem']["/dev/xvda1"]["kb_available"].to_f * modifier / 1024 / 16).round        
       end
         
 

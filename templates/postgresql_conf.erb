@@ -30,7 +30,7 @@
 #                TB = terabytes                     h   = hours
 #                                                   d   = days
 
-# Chef Ohai reported memory as: <%= @config[:memory] %> MB.
+# Chef Ohai reported memory as: <%= @config[:optimization][:memory] %> MB.
 
 #------------------------------------------------------------------------------
 # FILE LOCATIONS
@@ -39,7 +39,7 @@
 # The default values of these variables are driven from the -D command-line
 # option or PGDATA environment variable, represented here as ConfigDir.
 
-data_directory = '<%= @config[:data_directory] %>'         # use data in another directory
+data_directory = '<%= @config[:optimization][:data_directory] %>'         # use data in another directory
                                         # (change requires restart)
 hba_file = '/etc/postgresql/9.6/main/pg_hba.conf'       # host-based authentication file
                                         # (change requires restart)
@@ -63,7 +63,7 @@ listen_addresses = '*'
                                         # defaults to 'localhost'; use '*' for all
                                         # (change requires restart)
 port = 5432                             # (change requires restart)
-max_connections = <%= @config[:max_connections] %>                   # (change requires restart)
+max_connections = <%= @config[:optimization][:max_connections] %>                   # (change requires restart)
 #superuser_reserved_connections = 3     # (change requires restart)
 unix_socket_directories = '/var/run/postgresql' # comma-separated list of directories
                                         # (change requires restart)
@@ -112,7 +112,7 @@ ssl_key_file = '/etc/ssl/private/ssl-cert-snakeoil.key'         # (change requir
 
 # - Memory -
 
-shared_buffers = <%= @config[:shared_buffers] %>                  # min 128kB
+shared_buffers = <%= @config[:optimization][:shared_buffers] %>                  # min 128kB
                                         # (change requires restart)
 #huge_pages = try                       # on, off, or try
                                         # (change requires restart)
@@ -121,8 +121,8 @@ shared_buffers = <%= @config[:shared_buffers] %>                  # min 128kB
                                         # (change requires restart)
 # Caution: it is not advisable to set max_prepared_transactions nonzero unless
 # you actively intend to use prepared transactions.
-work_mem = <%= @config[:work_memory] %>                        # min 64kB
-maintenance_work_mem = <%= @config[:maintenance_work_memory] %>           # min 1MB
+work_mem = <%= @config[:optimization][:work_memory] %>                        # min 64kB
+maintenance_work_mem = <%= @config[:optimization][:maintenance_work_memory] %>           # min 1MB
 #replacement_sort_tuples = 150000       # limits use of replacement selection sort
 #autovacuum_work_mem = -1               # min 1MB, or -1 to use maintenance_work_mem
 #max_stack_depth = 2MB                  # min 100kB
@@ -176,7 +176,7 @@ dynamic_shared_memory_type = posix      # the default is the first option
 
 # - Settings -
 
-<% if @repl[:pg_node] == "master" && %w(warm_standby hot_standby).include?(@repl[:cluster_type]) %>
+<% if @config[:repl][:pg_node] == "master" && %w(warm_standby hot_standby).include?(@config[:repl][:cluster_type]) %>
 wal_level = replica
 <% end %>
 
@@ -186,7 +186,7 @@ wal_level = replica
                                                 # (turning this off can cause
                                                 # unrecoverable data corruption)
 
-synchronous_commit = <%= @config[:synchronous_commit] %>               # synchronization level;
+synchronous_commit = <%= @config[:optimization][:synchronous_commit] %>               # synchronization level;
                                         # off, local, remote_write, remote_apply, or on
 #wal_sync_method = fsync                # the default is the first option
                                         # supported by the operating system:
@@ -211,23 +211,23 @@ synchronous_commit = <%= @config[:synchronous_commit] %>               # synchro
 
 #checkpoint_timeout = 5min              # range 30s-1d
 <%# This variable includes "max_wal_size =" since older versions called it "checkpoint_segments" %>
-<%= @config[:checkpoint_segments_or_max_wal_size] %>
+<%= @config[:optimization][:checkpoint_segments_or_max_wal_size] %>
 #max_wal_size = 1GB  
 #min_wal_size = 80MB
-checkpoint_completion_target = <%= @config[:checkpoint_completion_target] %>     # checkpoint target duration, 0.0 - 1.0
+checkpoint_completion_target = <%= @config[:optimization][:checkpoint_completion_target] %>     # checkpoint target duration, 0.0 - 1.0
 #checkpoint_flush_after = 256kB         # measured in pages, 0 disables
 #checkpoint_warning = 30s               # 0 disables
 
 # - Archiving -
 
-<% if @repl[:pg_node] == "master" && %w(warm_standby hot_standby).include?(@repl[:cluster_type]) %>
+<% if @config[:repl][:pg_node] == "master" && %w(warm_standby hot_standby).include?(@config[:repl][:cluster_type]) %>
 archive_mode = on
 <% end %>
 
 #archive_mode = off             # enables archiving; off, on, or always
                                 # (change requires restart)
 
-<% if @repl[:pg_node] == "master" && %w(warm_standby hot_standby).include?(@repl[:cluster_type]) %>
+<% if @config[:repl][:pg_node] == "master" && %w(warm_standby hot_standby).include?(@config[:repl][:cluster_type]) %>
 archive_command = 'cd .'
 <% end %>
 
@@ -248,7 +248,7 @@ archive_command = 'cd .'
 
 # Set these on the master and on any standby that will send replication data.
 
-<% if @repl[:pg_node] == "master" && %w(warm_standby hot_standby).include?(@repl[:cluster_type]) %>
+<% if @config[:repl][:pg_node] == "master" && %w(warm_standby hot_standby).include?(@config[:repl][:cluster_type]) %>
 max_wal_senders = 4  # number of nodes + 2 (for possible reconnection attempts)
 <% end %>
 
@@ -256,8 +256,8 @@ max_wal_senders = 4  # number of nodes + 2 (for possible reconnection attempts)
                                 # (change requires restart)
 #wal_keep_segments = 0          # in logfile segments, 16MB each; 0 disables
 
-<% if @repl[:pg_node] == "master" && %w(warm_standby hot_standby).include?(@repl[:cluster_type]) %>
-# wal_keep_segments = 0 
+<% if @config[:repl][:pg_node] == "master" && %w(warm_standby hot_standby).include?(@config[:repl][:cluster_type]) %>
+wal_keep_segments = <%= @config[:optimization][:wal_keep_segments] %> 
 <% end %>
 
 
@@ -321,14 +321,14 @@ max_wal_senders = 4  # number of nodes + 2 (for possible reconnection attempts)
 # - Planner Cost Constants -
 
 #seq_page_cost = 1.0                    # measured on an arbitrary scale
-random_page_cost = <%= @config[:random_page_cost] %>                 # same scale as above
+random_page_cost = <%= @config[:optimization][:random_page_cost] %>                 # same scale as above
 #cpu_tuple_cost = 0.01                  # same scale as above
 #cpu_index_tuple_cost = 0.005           # same scale as above
 #cpu_operator_cost = 0.0025             # same scale as above
 #parallel_tuple_cost = 0.1              # same scale as above
 #parallel_setup_cost = 1000.0   # same scale as above
 #min_parallel_relation_size = 8MB
-effective_cache_size = <%= @config[:effective_cache_size] %>
+effective_cache_size = <%= @config[:optimization][:effective_cache_size] %>
 
 # - Genetic Query Optimizer -
 
@@ -342,7 +342,7 @@ effective_cache_size = <%= @config[:effective_cache_size] %>
 
 # - Other Planner Options -
 
-default_statistics_target = <%= @config[:default_statistics_target] %>        # range 1-10000
+default_statistics_target = <%= @config[:optimization][:default_statistics_target] %>        # range 1-10000
 #constraint_exclusion = partition       # on, off, or partition
 #cursor_tuple_fraction = 0.1            # range 0.0-1.0
 #from_collapse_limit = 8

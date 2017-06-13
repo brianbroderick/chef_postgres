@@ -2,8 +2,6 @@
 ### This was causing issues when moving the data directory.  
 ### notifies, along with a ruby_block that waits until the pid is deleted fixes the issue.
 
-::Chef::Log.info(node['filesystem'])
-
 node.default['chef_postgres']['release_apt_codename'] = "xenial"
 node.default['chef_postgres']['version'] = "9.6"
 node.default['chef_postgres']['workload'] = "oltp"
@@ -68,9 +66,9 @@ template "postgresql.conf" do
   owner "postgres"
   path "/etc/postgresql/#{version}/main/postgresql.conf"
   source "postgresql_conf.erb" 
-  variables config: ::Chef::Provider::PgConfig.call(node)
-  variables repl: { cluster_type: node['chef_postgres']['pg_config']['cluster_type'],
-                    pg_node: node['chef_postgres']['pg_config']['pg_node'] }  
+  variables config: { optimization: ::Chef::Provider::PgConfig.call(node),
+                      repl: { cluster_type: node['chef_postgres']['pg_config']['cluster_type'],
+                              pg_node: node['chef_postgres']['pg_config']['pg_node'] }  
 end
 
 service "stop_postgres" do
