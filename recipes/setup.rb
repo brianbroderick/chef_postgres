@@ -68,7 +68,8 @@ template "postgresql.conf" do
   source "postgresql_conf.erb" 
   variables config: { optimization: ::Chef::Provider::PgConfig.call(node),
                       repl: { cluster_type: node['chef_postgres']['pg_config']['cluster_type'],
-                              pg_node: node['chef_postgres']['pg_config']['pg_node'] }  
+                              pg_node: node['chef_postgres']['pg_config']['pg_node'] } 
+                    } 
 end
 
 service "stop_postgres" do
