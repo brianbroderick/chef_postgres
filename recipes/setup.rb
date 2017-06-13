@@ -94,16 +94,17 @@ end
 # end 
 
 bash "move_data_directory" do
-  code <<-EOF_MDD   
+  code <<-EOF_MDD  
+  echo "** Moving data directory **" >> "/etc/postgresql/#{version}/main/setup.log 
   TIME_DELAY = 0.1
   WAITED = 0  
   until [ ! -f /var/lib/postgresql/#{version}/main/postmaster.pid ]; do
     sleep $TIME_DELAY
     $WAITED = $(($WAITED + $TIME_DELAY))    
-    echo "** Waiting for Postgres to Stop. Waited: $WAITED seconds **" >> ~/bash.log
+    echo "** Waiting for Postgres to Stop. Waited: $WAITED seconds **" >> "/etc/postgresql/#{version}/main/setup.log
     if [ $WAITED -gt 15 ] 
     then
-      echo "** Waiting long enough... **" >> ~/bash.log
+      echo "** Waiting long enough... **" >> "/etc/postgresql/#{version}/main/setup.log
       break
     fi
   done 
