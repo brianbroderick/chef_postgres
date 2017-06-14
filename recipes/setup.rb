@@ -1,7 +1,3 @@
-::Chef::Log.info("Platform: #{node['ec2']}")
-# ::Chef::Log.info("Platform: #{node.to_json}")
-
-
 node.default['chef_postgres']['release_apt_codename'] = "xenial"
 node.default['chef_postgres']['version'] = "9.6"
 node.default['chef_postgres']['workload'] = "oltp"
@@ -46,12 +42,14 @@ service "stop_postgres" do
   notifies :run, 'ruby_block[log_stop_pg]', :before  
 end
 
+chef_gem 'aws-sdk'
+
 directory node['chef_postgres']['pg_config']['data_directory'] do
+  action :create
   owner 'postgres'
   group 'postgres'
   mode '0700'
-  recursive true
-  action :create
+  recursive true  
   only_if { node['chef_postgres']['pg_config']['data_directory_on_separate_drive'] }
   notifies :run, 'ruby_block[log_data_directory]', :before
 end
@@ -78,33 +76,19 @@ template "postgresql.conf" do
                     } 
 end
 
-# ## Wait for PG to fully stop and remove its PID
-# attempts = 0
-# if ::File.exist?("/var/lib/postgresql/#{version}/main/postmaster.pid")
-#   ::Chef::Log.info("** Waiting for Postgres to Stop. **")
-# end
-# until !::File.exist?("/var/lib/postgresql/#{version}/main/postmaster.pid") do
-#   attempts += 1
-#   sleep(0.1) 
-#   ::Chef::Log.info("** Waiting for Postgres to Stop. Waited: #{(attempts * 0.1).to_s} seconds **")  
-#   if attempts >= 150
-#     ::Chef::Log.info("** Waited 15 seconds... moving on. **")
-#     break
-#   end      
-# end 
-
 bash "move_data_directory" do
+  action :run
   code <<-EOF_MDD  
-  echo "** Moving data directory **" >> /var/log/postgresql/chef_setup.log 
+  echo "Moving data directory" >> /var/log/postgresql/chef_setup.log 
   TIME_DELAY = 0.1
   WAITED = 0  
   until [ ! -f /var/lib/postgresql/#{version}/main/postmaster.pid ]; do
     sleep $TIME_DELAY
     $WAITED = $(($WAITED + $TIME_DELAY))    
-    echo "** Waiting for Postgres to Stop. Waited: $WAITED seconds **" >> /var/log/postgresql/chef_setup.log
+    echo "Waiting for Postgres to Stop. Waited: $WAITED seconds" >> /var/log/postgresql/chef_setup.log
     if [ $WAITED -gt 15 ] 
     then
-      echo "** Waiting long enough... **" >> /var/log/postgresql/chef_setup.log
+      echo "Waiting long enough..." >> /var/log/postgresql/chef_setup.log
       break
     fi
   done 
@@ -112,8 +96,7 @@ bash "move_data_directory" do
   EOF_MDD
   not_if { ::File.exist?("#{node['chef_postgres']['pg_config']['data_directory']}/PG_VERSION") }
   only_if { node['chef_postgres']['pg_config']['data_directory_on_separate_drive'] }
-  user "postgres"    
-  action :run
+  user "postgres"      
   notifies :run, 'ruby_block[log_move_data_directory]', :before  
 end
 
@@ -124,11 +107,9 @@ service "start_postgres" do
 end
 
 bash "create_admin_user" do
-  user "postgres"
-  code <<-EOF_CAU
-  echo "CREATE USER #{admin_user} WITH PASSWORD '#{admin_pass}' SUPERUSER CREATEDB CREATEROLE; CREATE DATABASE #{admin_user} OWNER #{admin_user};" | psql -U postgres -d postgres
-  EOF_CAU
   action :run
+  user "postgres"
+  code "echo \"CREATE USER #{admin_user} WITH PASSWORD '#{admin_pass}' SUPERUSER CREATEDB CREATEROLE; CREATE DATABASE #{admin_user} OWNER #{admin_user};\" | psql -U postgres -d postgres"
   notifies :run, 'ruby_block[log_create_admin]', :before  
 end
 
@@ -140,7 +121,8 @@ file "record_admin" do
   owner "root"
   path "/etc/postgresql/#{version}/main/admin_login"  
   action :create
-end if admin_is_generated
+  only_if { admin_is_generated }
+end 
 
 bash "create_repl_user" do
   user "postgres"
@@ -159,7 +141,8 @@ file "record_repl" do
   owner "root"
   path "/etc/postgresql/#{version}/main/repl_login"  
   action :create
-end if repl_is_generated
+  only_if { repl_is_generated }
+end 
 
 ### Logging ###
 
