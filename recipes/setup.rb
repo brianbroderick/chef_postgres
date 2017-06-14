@@ -1,5 +1,5 @@
-# ::Chef::Log.info("Platform: #{node['ec2']}")
-::Chef::Log.info("Platform: #{node.to_json}")
+::Chef::Log.info("Platform: #{node['ec2']}")
+# ::Chef::Log.info("Platform: #{node.to_json}")
 
 
 node.default['chef_postgres']['release_apt_codename'] = "xenial"
