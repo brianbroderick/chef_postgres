@@ -1,6 +1,4 @@
-### Using 'notifies' on a lot of the directives since PG deletes a pid when it's stopped.  
-### This was causing issues when moving the data directory.  
-### notifies, along with a ruby_block that waits until the pid is deleted fixes the issue.
+::Chef::Log.info(node)
 
 node.default['chef_postgres']['release_apt_codename'] = "xenial"
 node.default['chef_postgres']['version'] = "9.6"
@@ -95,16 +93,16 @@ end
 
 bash "move_data_directory" do
   code <<-EOF_MDD  
-  echo "** Moving data directory **" >> /etc/postgresql/#{version}/main/setup.log 
+  echo "** Moving data directory **" >> /var/log/postgresql/chef_setup.log 
   TIME_DELAY = 0.1
   WAITED = 0  
   until [ ! -f /var/lib/postgresql/#{version}/main/postmaster.pid ]; do
     sleep $TIME_DELAY
     $WAITED = $(($WAITED + $TIME_DELAY))    
-    echo "** Waiting for Postgres to Stop. Waited: $WAITED seconds **" >> /etc/postgresql/#{version}/main/setup.log
+    echo "** Waiting for Postgres to Stop. Waited: $WAITED seconds **" >> /var/log/postgresql/chef_setup.log
     if [ $WAITED -gt 15 ] 
     then
-      echo "** Waiting long enough... **" >> /etc/postgresql/#{version}/main/setup.log
+      echo "** Waiting long enough... **" >> /var/log/postgresql/chef_setup.log
       break
     fi
   done 
