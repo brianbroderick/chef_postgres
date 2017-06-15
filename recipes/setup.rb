@@ -1,6 +1,7 @@
 chef_gem 'aws-sdk' do
   compile_time true
 end
+require 'aws-sdk'
 
 node.default['chef_postgres']['release_apt_codename'] = "xenial"
 node.default['chef_postgres']['version'] = "9.6"

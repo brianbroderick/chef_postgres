@@ -5,8 +5,6 @@
 #   :access_key_id     - aws credentials
 #   :secret_access_key - aws credentials
 
-require 'aws-sdk'
-
 class Chef
   class Provider 
     class UploadFile < Chef::Provider::LWRPBase
