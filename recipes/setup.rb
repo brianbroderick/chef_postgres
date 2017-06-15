@@ -1,3 +1,7 @@
+chef_gem 'aws-sdk' do
+  compile_time true
+end
+
 node.default['chef_postgres']['release_apt_codename'] = "xenial"
 node.default['chef_postgres']['version'] = "9.6"
 node.default['chef_postgres']['workload'] = "oltp"
@@ -141,8 +145,6 @@ file "record_repl" do
   action :create
   only_if { repl_is_generated }
 end 
-
-chef_gem 'aws-sdk'
 
 ::Chef::Provider::UploadFile.call({
   region: node['chef_postgres']['s3']['region'],
