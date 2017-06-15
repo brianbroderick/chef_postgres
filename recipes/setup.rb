@@ -160,17 +160,18 @@ end
 bash "create_base_backup" do  
   code <<-EOF_CBB
   rm -rf /backups/base_backup/*
-  pg_basebackup -F tar -z -d 'host=localhost user=#{repl_user} password=#{repl_pass}' -D /backups/base_backup --xlog-method=stream
+  pg_basebackup -d 'host=localhost user=#{repl_user} password=#{repl_pass}' -D /backups/base_backup --xlog-method=stream
+  tar -czf base_backup.tgz /backups/base_backup/
   EOF_CBB
   action :run
   notifies :run, 'ruby_block[log_create_base_backup]', :before  
 end
 
-# ruby_block 's3_upload_backup' do
-#   block do    
-#     ::Chef::Provider::UploadFile.call(node,
-#       { bucket: node['chef_postgres']['s3']['bucket'],      
-#         source: "/tmp/chef_setup.log" })    
-#   end
-# end
+ruby_block 's3_upload_backup' do
+  block do    
+    ::Chef::Provider::UploadFile.call(node,
+      { bucket: node['chef_postgres']['s3']['bucket'],      
+        source: "/backups/base_backup/base_backup.tgz" })    
+  end
+end
 
