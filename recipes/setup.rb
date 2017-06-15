@@ -149,23 +149,17 @@ end
 
 ruby_block 's3_upload' do
   block do    
-    ::Chef::Provider::UploadFile.call({
-      region: node['chef_postgres']['s3']['region'],
-      bucket: node['chef_postgres']['s3']['bucket'],
-      access_key_id: node['chef_postgres']['s3']['access_key_id'],
-      secret_access_key: node['chef_postgres']['s3']['secret_access_key'],
-      file: "/tmp/chef_setup.log"
+    ::Chef::Provider::UploadFile.call({      
+      bucket: node['chef_postgres']['s3']['bucket'],      
+      source: "/tmp/chef_setup.log"
     })    
   end
 end
 
 ruby_block 's3_download' do  
   block do
-    ::Chef::Provider::DownloadFile.call({
-      region: node['chef_postgres']['s3']['region'],
-      bucket: node['chef_postgres']['s3']['bucket'],
-      access_key_id: node['chef_postgres']['s3']['access_key_id'],
-      secret_access_key: node['chef_postgres']['s3']['secret_access_key'],
+    ::Chef::Provider::DownloadFile.call({      
+      bucket: node['chef_postgres']['s3']['bucket'],      
       file: "chef_setup.log",
       destination: "/tmp/downloaded_file"
     })

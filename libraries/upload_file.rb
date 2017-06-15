@@ -1,9 +1,7 @@
 # Options:
 #   :region
-#   :file
+#   :source - source file path
 #   :bucket
-#   :access_key_id     - aws credentials
-#   :secret_access_key - aws credentials
 
 class Chef
   class Provider 
@@ -20,11 +18,11 @@ class Chef
 
       def call
         s3 = ::Aws::S3::Resource.new(
-          region: opts[:region],
-          access_key_id: opts[:access_key_id],
-          secret_access_key: opts[:secret_access_key]
+          region: node['chef_postgres']['s3']['region'],
+          access_key_id: node['chef_postgres']['s3']['access_key_id'],
+          secret_access_key: node['chef_postgres']['s3']['secret_access_key']
         )
-        file = opts[:file]
+        file = opts[:source]
         bucket = opts[:bucket]
         
         name = ::File.basename(file)
