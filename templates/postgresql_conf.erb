@@ -281,6 +281,10 @@ wal_keep_segments = <%= @config[:optimization][:wal_keep_segments] %>
 
 # These settings are ignored on a master server.
 
+<% if @config[:repl][:pg_node] == "standby" && @config[:repl][:cluster_type] == "hot_standby" %>
+hot_standby = on
+<% end %>
+
 #hot_standby = off                      # "on" allows queries during recovery
                                         # (change requires restart)
 #max_standby_archive_delay = 30s        # max delay before canceling queries

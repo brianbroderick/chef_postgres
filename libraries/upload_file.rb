@@ -1,5 +1,4 @@
 # Options:
-#   :region
 #   :source - source file path
 #   :bucket
 
