@@ -1,4 +1,4 @@
-include_recipe 'postgresql_conf::log_output'
+include_recipe 'chef_postgres::log_output'
 
 chef_gem 'aws-sdk' do
   compile_time true
