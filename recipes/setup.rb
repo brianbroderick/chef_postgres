@@ -82,16 +82,16 @@ end
 bash "move_data_directory" do
   action :run
   code <<-EOF_MDD  
-  echo "Moving data directory" >> /var/log/postgresql/chef_setup.log 
+  echo "Moving data directory" >> /tmp/chef_setup.log   
   TIME_DELAY = 0.1
   WAITED = 0  
   until [ ! -f /var/lib/postgresql/#{version}/main/postmaster.pid ]; do
     sleep $TIME_DELAY
     $WAITED = $(($WAITED + $TIME_DELAY))    
-    echo "Waiting for Postgres to Stop. Waited: $WAITED seconds" >> /var/log/postgresql/chef_setup.log
+    echo "Waiting for Postgres to Stop. Waited: $WAITED seconds" >> /tmp/chef_setup.log
     if [ $WAITED -gt 15 ] 
     then
-      echo "Waiting long enough..." >> /var/log/postgresql/chef_setup.log
+      echo "Waiting long enough..." >> /tmp/chef_setup.log
       break
     fi
   done 
@@ -154,7 +154,7 @@ ruby_block 'S3 Test' do
       bucket: node['chef_postgres']['s3']['bucket'],
       access_key_id: node['chef_postgres']['s3']['access_key_id'],
       secret_access_key: node['chef_postgres']['s3']['secret_access_key'],
-      file: "/var/log/postgresql/chef_setup.log"
+      file: "/tmp/chef_setup.log"
     })
   end
 end
