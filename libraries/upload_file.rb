@@ -19,7 +19,7 @@ class Chef
       end      
 
       def call
-        s3 = ::Aws::S3::Client.new(
+        s3 = ::Aws::S3::Resource.new(
           region: opts[:region],
           access_key_id: opts[:access_key_id],
           secret_access_key: opts[:secret_access_key]
