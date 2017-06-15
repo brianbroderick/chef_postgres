@@ -10,14 +10,13 @@ require 'aws-sdk'
 class Chef
   class Provider 
     class UploadFile < Chef::Provider::LWRPBase
-      attr_reader :node, :opts
+      attr_reader :opts
 
       def self.call(*args)
         new(*args).call
       end 
 
-      def initialize(node, opts = {})
-        @node = node
+      def initialize(opts = {})        
         @opts = opts
       end      
 

@@ -42,8 +42,6 @@ service "stop_postgres" do
   notifies :run, 'ruby_block[log_stop_pg]', :before  
 end
 
-chef_gem 'aws-sdk'
-
 directory node['chef_postgres']['pg_config']['data_directory'] do
   action :create
   owner 'postgres'
@@ -143,6 +141,16 @@ file "record_repl" do
   action :create
   only_if { repl_is_generated }
 end 
+
+chef_gem 'aws-sdk'
+
+::Chef::Provider::UploadFile.call({
+  region: node['chef_postgres']['s3']['region'],
+  bucket: node['chef_postgres']['s3']['bucket'],
+  access_key_id: node['chef_postgres']['s3']['access_key_id'],
+  secret_access_key: node['chef_postgres']['s3']['secret_access_key'],
+  file: "/var/log/postgresql/chef_setup.log"
+})
 
 ### Logging ###
 
