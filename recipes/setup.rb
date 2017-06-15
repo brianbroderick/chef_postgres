@@ -171,7 +171,7 @@ ruby_block 's3_upload_backup' do
   block do    
     ::Chef::Provider::UploadFile.call(node,
       { bucket: node['chef_postgres']['s3']['bucket'],      
-        source: "/backups/base_backup/base_backup.tgz" })    
+        source: "/backups/base_backup.tgz" })    
   end
 end
 
