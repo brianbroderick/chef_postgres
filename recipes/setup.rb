@@ -148,8 +148,7 @@ file "record_repl" do
 end 
 
 ruby_block 's3_upload' do
-  block do
-    `touch /tmp/chef_setup.log`
+  block do    
     ::Chef::Provider::UploadFile.call({
       region: node['chef_postgres']['s3']['region'],
       bucket: node['chef_postgres']['s3']['bucket'],
@@ -162,7 +161,7 @@ end
 
 ruby_block 's3_download' do  
   block do
-    ::Chef::Provider::UploadFile.call({
+    ::Chef::Provider::DownloadFile.call({
       region: node['chef_postgres']['s3']['region'],
       bucket: node['chef_postgres']['s3']['bucket'],
       access_key_id: node['chef_postgres']['s3']['access_key_id'],
