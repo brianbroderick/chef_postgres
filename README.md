@@ -6,17 +6,17 @@ To change the default settings, pass in custom JSON.  The below JSON represents 
 
 ```
 {
-  "postgresql":  {
+  "chef_postgres":  {
     "release_apt_codename": "xenial",
     "version": "9.6",
-    "workload": "oltp" 
-  },
-  "s3":  {
-    "region": "my-region",
-    "bucket": "my-bucket",
-    "access_key_id": "my-access-key",
-    "secret_access_key": "my-secret-key" 
-  }
+    "workload": "oltp",
+    "s3":  {
+      "region": "my-region",
+      "bucket": "my-bucket",
+      "access_key_id": "my-access-key",
+      "secret_access_key": "my-secret-key" 
+    }
+  }  
 }
 ```
 
