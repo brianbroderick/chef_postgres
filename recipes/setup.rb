@@ -147,7 +147,7 @@ file "record_repl" do
   only_if { repl_is_generated }
 end 
 
-ruby_block 'S3 Test' do
+ruby_block 'S3 Test UL' do
   block do
     ::Chef::Provider::UploadFile.call({
       region: node['chef_postgres']['s3']['region'],
@@ -155,6 +155,19 @@ ruby_block 'S3 Test' do
       access_key_id: node['chef_postgres']['s3']['access_key_id'],
       secret_access_key: node['chef_postgres']['s3']['secret_access_key'],
       file: "/tmp/chef_setup.log"
+    })
+  end
+end
+
+ruby_block 'S3 Test DL' do
+  block do
+    ::Chef::Provider::UploadFile.call({
+      region: node['chef_postgres']['s3']['region'],
+      bucket: node['chef_postgres']['s3']['bucket'],
+      access_key_id: node['chef_postgres']['s3']['access_key_id'],
+      secret_access_key: node['chef_postgres']['s3']['secret_access_key'],
+      file: "chef_setup.log",
+      destination: "/tmp/downloaded_file"
     })
   end
 end
