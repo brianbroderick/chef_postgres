@@ -6,13 +6,14 @@
 class Chef
   class Provider 
     class UploadFile < Chef::Provider::LWRPBase
-      attr_reader :opts
+      attr_reader :node, :opts
 
       def self.call(*args)
         new(*args).call
       end 
 
-      def initialize(opts = {})        
+      def initialize(node, opts = {})        
+        @node = node
         @opts = opts
       end      
 

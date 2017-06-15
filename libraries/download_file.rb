@@ -7,13 +7,14 @@
 class Chef
   class Provider 
     class DownloadFile < Chef::Provider::LWRPBase
-      attr_reader :opts
+      attr_reader :node, :opts
 
       def self.call(*args)
         new(*args).call
       end 
 
-      def initialize(opts = {})        
+      def initialize(node, opts = {})  
+        @node = node      
         @opts = opts
       end      
 
