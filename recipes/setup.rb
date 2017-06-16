@@ -160,7 +160,7 @@ end
 bash "create_base_backup" do  
   code <<-EOF_CBB
   rm -rf /backups/base_backup/*
-  pg_basebackup -d 'host=localhost user=#{repl_user} password=#{repl_pass}' -D /backups/base_backup --xlog-method=stream
+  pg_basebackup -d 'host=localhost user=#{repl_user} password=#{repl_pass}' -D /backups/base_backup --xlog-method=stream --write-recovery-conf
   tar -czf /backups/base_backup.tgz /backups/base_backup/
   EOF_CBB
   action :run
