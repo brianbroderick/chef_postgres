@@ -1,20 +1,23 @@
-This repo is designed to make it easy to install Postgres using Chef (or Amazon Opsworks).
-Currently, it supports Ubuntu, but will eventually be expanded to support other Linux Distros. 
-It's also geared towards using Postgres >= 9.1. 
+This cookbook is designed to make it easy to install Postgres 9.1+ on an EC2 Ubuntu instance using Chef or Amazon Opsworks version 12+.
 
-To change the default settings, pass in custom JSON.  The below JSON represents the defaults.
+The root recipes are chef_postgres::master and chef_postgres::standby. Set up the master first. This will create a pg_basebackup dump that is uploaded to S3 (partially using the server_name in the S3 path) along with the settings required for the recovery.conf file on the standby.
+
+Once the master is set up, run chef_postgres::standby. This grabs the backup from S3 and uses this to deploy the standby. 
+
+To change the default settings, pass in custom JSON.  These are the defaults:
 
 ```
 {
   "chef_postgres":  {
-    "release_apt_codename": "xenial",
+    "server_name": "default",
+    "release_apt_codename": "codename_reported_by_ec2",
     "version": "9.6",
     "workload": "oltp",
     "s3":  {
-      "region": "my-region",
-      "bucket": "my-bucket",
-      "access_key_id": "my-access-key",
-      "secret_access_key": "my-secret-key" 
+      "region": "",
+      "bucket": "",
+      "access_key_id": "",
+      "secret_access_key": "" 
     }
   }  
 }
