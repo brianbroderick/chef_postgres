@@ -40,13 +40,19 @@ class Chef
       end     
 
       def max_connections
-        { web: 200,
-          oltp: 300,
-          dw: 100,
-          mixed: 150,
-          desktop: 50
+        { web:  connection_math(10)
+          oltp: connection_math(10)
+          dw:   connection_math(20)
+          mixed: connection_math(15)
+          desktop: (connection_math(10) / 4).to_i
         }.fetch(workload)
       end
+
+      def connection_math(desired_work_mem)
+        # round to the nearest 10 connections using desired_work_mem in MB as a guide.
+        # For example, if you have 990 MB of memory and want a desired_work_mem around 10MB, this will return 100
+        (memory / desired_work_mem).round(-1)
+      end      
 
       def ohai_memory
         node['memory']['total']
