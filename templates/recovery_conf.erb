@@ -1,2 +1,2 @@
-standby_mode = <% @config[:standby] == "hot_standby" %>'on'<% else %>'off'<% end %>
+standby_mode = <% if @config[:standby] == "hot_standby" %>'on'<% else %>'off'<% end %>
 primary_conninfo = 'user=<%= @config[:username] %> password=<%= @config[:password] %> host=<%= @config[:hostname] %> port=5432 sslmode=prefer sslcompression=1 krbsrvname=postgres'
