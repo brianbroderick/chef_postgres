@@ -14,7 +14,8 @@ template "recovery_conf.source" do
   source "recovery_conf.erb"
   variables({ config: { username: repl_user,
                         password: repl_pass,
-                        hostname: node["ec2"]["local_hostname"] } })                                 
+                        hostname: node["ec2"]["local_hostname"],
+                        standby: node["chef_postgres"]["pg_config"]["cluster_type"] } })                                 
 end
 
 bash "move_data_directory" do

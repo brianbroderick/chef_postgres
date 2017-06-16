@@ -7,10 +7,10 @@ chef_gem "aws-sdk" do
 end
 require "aws-sdk"
 
+node.default["chef_postgres"]["server_name"] = "default"
 node.default["chef_postgres"]["release_apt_codename"] = node["lsb"]["codename"] 
 node.default["chef_postgres"]["version"] = "9.6"
 node.default["chef_postgres"]["workload"] = "oltp"
-# node.default['chef_postgres']['pg_config']['data_drive'] = "/mnt/data"
 
 codename = node["chef_postgres"]["release_apt_codename"]
 version = node["chef_postgres"]["version"]
