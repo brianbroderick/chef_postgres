@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Options:
 #   :region
 #   :file
@@ -5,27 +6,27 @@
 #   :destination       - path to where it will be saved
 
 class Chef
-  class Provider 
+  class Provider
     class DownloadFile < Chef::Provider::LWRPBase
       attr_reader :node, :opts
 
       def self.call(*args)
         new(*args).call
-      end 
+      end
 
-      def initialize(node, opts = {})  
-        @node = node      
+      def initialize(node, opts = {})
+        @node = node
         @opts = opts
-      end      
+      end
 
       def call
         s3 = ::Aws::S3::Resource.new(
-          region: node['chef_postgres']['s3']['region'],
-          access_key_id: node['chef_postgres']['s3']['access_key_id'],
-          secret_access_key: node['chef_postgres']['s3']['secret_access_key']
+          { region: node["chef_postgres"]["s3"]["region"],
+            access_key_id: node["chef_postgres"]["s3"]["access_key_id"],
+            secret_access_key: node["chef_postgres"]["s3"]["secret_access_key"] }
         )
         obj = s3.bucket(opts[:bucket]).object(opts[:file])
-        obj.get(response_target: opts[:destination])
+        obj.get({ response_target: opts[:destination] })
       end
     end
   end

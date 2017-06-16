@@ -1,2 +1,3 @@
-require 'chefspec'
-require 'chefspec/berkshelf'
+# frozen_string_literal: true
+require "chefspec"
+require "chefspec/berkshelf"

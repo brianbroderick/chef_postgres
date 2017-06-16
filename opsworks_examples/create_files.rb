@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 file "Create a file" do
   content "<html>This is a placeholder for the home page.</html>"
   group "root"
@@ -6,10 +7,10 @@ file "Create a file" do
   path "/tmp/create-directory-demo/index.html"
 end
 
-cookbook_file "Copy a file" do  
+cookbook_file "Copy a file" do
   group "root"
   mode "0755"
   owner "ubuntu"
   path "/tmp/create-directory-demo/hello.txt"
-  source "hello.txt"  
+  source "hello.txt"
 end

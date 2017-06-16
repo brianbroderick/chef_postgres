@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 stack = search("aws_opsworks_stack").first
 Chef::Log.info("********** Content of 'custom_cookbooks_source' **********")
 

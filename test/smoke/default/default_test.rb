@@ -1,4 +1,5 @@
 # # encoding: utf-8
+# frozen_string_literal: true
 
 # Inspec test for recipe chef_postgres::default
 
@@ -7,7 +8,7 @@
 
 unless os.windows?
   # This is an example test, replace with your own test.
-  describe user('root'), :skip do
+  describe user("root"), :skip do
     it { should exist }
   end
 end

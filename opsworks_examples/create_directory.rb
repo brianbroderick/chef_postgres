@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 directory "Create a directory" do
   group "root"
   mode "0755"
