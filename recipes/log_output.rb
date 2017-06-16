@@ -45,3 +45,9 @@ ruby_block "log_create_base_backup" do
   block { ::Chef::Log.info("** Create Base Backup **") }
   action :nothing
 end
+
+ruby_block "log_unzip_base_backup" do
+ block { ::Chef::Log.info("** Unzip Base Backup and Extract to Data Dir **") }
+  action :nothing
+end
+

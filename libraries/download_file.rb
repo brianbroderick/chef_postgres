@@ -25,7 +25,7 @@ class Chef
             access_key_id: node["chef_postgres"]["s3"]["access_key_id"],
             secret_access_key: node["chef_postgres"]["s3"]["secret_access_key"] }
         )
-        obj = s3.bucket(opts[:bucket]).object(opts[:file])
+        obj = s3.bucket(opts[:bucket]).object("#{node["chef_postgres"]["server_name"]}/#{opts[:file]}")
         obj.get({ response_target: opts[:destination] })
       end
     end

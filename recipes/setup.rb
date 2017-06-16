@@ -8,7 +8,7 @@ end
 require "aws-sdk"
 
 node.default["chef_postgres"]["server_name"] = "default"
-node.default["chef_postgres"]["release_apt_codename"] = node["lsb"]["codename"] 
+node.default["chef_postgres"]["release_apt_codename"] = node["lsb"]["codename"]
 node.default["chef_postgres"]["version"] = "9.6"
 node.default["chef_postgres"]["workload"] = "oltp"
 
@@ -22,8 +22,10 @@ node.default["chef_postgres"]["pg_config"]["data_directory"] = if node["chef_pos
                                                                  "/var/lib/postgresql/#{version}/main"
                                                                end
 
+# rubocop:disable Lint/UselessAssignment
 admin_user, admin_pass, admin_is_generated = ::Chef::Provider::DbUser.call(node, "admin_login")
 repl_user, repl_pass, repl_is_generated = ::Chef::Provider::DbUser.call(node, "repl_login")
+# rubocop:enable Lint/UselessAssignment
 
 ::Chef::Log.info("** Setting up apt_repository to get access to the latest PG versions **")
 
@@ -79,6 +81,14 @@ template "postgresql.conf" do
                                 pg_node: node["chef_postgres"]["pg_config"]["pg_node"] } } })
 end
 
+directory "/backups/base_backup" do
+  owner "root"
+  group "root"
+  mode "0744"
+  recursive true
+  notifies :run, "ruby_block[log_backup_directory]", :before
+end
+
 # # Build this on the master so the standbys have the right settings
 # template "recovery_conf.source" do
 #   group "postgres"
@@ -89,7 +99,7 @@ end
 #   variables({ config: { username: repl_user,
 #                         password: repl_pass,
 #                         hostname: node["ec2"]["local_hostname"] } })
-#   only_if { node["chef_postgres"]["pg_config"]["pg_node"] == "master" }                                
+#   only_if { node["chef_postgres"]["pg_config"]["pg_node"] == "master" }
 # end
 
 # bash "move_data_directory" do
@@ -127,7 +137,7 @@ end
 #   user "postgres"
 #   code "echo \"CREATE USER #{admin_user} WITH PASSWORD '#{admin_pass}' SUPERUSER CREATEDB CREATEROLE; CREATE DATABASE #{admin_user} OWNER #{admin_user};\" | psql -U postgres -d postgres"
 #   notifies :run, "ruby_block[log_create_admin]", :before
-#   only_if { node["chef_postgres"]["pg_config"]["pg_node"] == "master" } 
+#   only_if { node["chef_postgres"]["pg_config"]["pg_node"] == "master" }
 # end
 
 # # Only run this, if generating the info through the defaults.
@@ -139,7 +149,7 @@ end
 #   path "/etc/postgresql/#{version}/main/admin_login"
 #   action :create
 #   only_if { admin_is_generated }
-#   only_if { node["chef_postgres"]["pg_config"]["pg_node"] == "master" } 
+#   only_if { node["chef_postgres"]["pg_config"]["pg_node"] == "master" }
 # end
 
 # bash "create_repl_user" do
@@ -149,7 +159,7 @@ end
 #   EOF_CRU
 #   action :run
 #   notifies :run, "ruby_block[log_create_repl]", :before
-#   only_if { node["chef_postgres"]["pg_config"]["pg_node"] == "master" } 
+#   only_if { node["chef_postgres"]["pg_config"]["pg_node"] == "master" }
 # end
 
 # directory "/backups/base_backup" do
@@ -158,18 +168,18 @@ end
 #   mode "0744"
 #   recursive true
 #   notifies :run, "ruby_block[log_backup_directory]", :before
-#   only_if { node["chef_postgres"]["pg_config"]["pg_node"] == "master" } 
+#   only_if { node["chef_postgres"]["pg_config"]["pg_node"] == "master" }
 # end
 
 # bash "create_base_backup" do
 #   code <<-EOF_CBB
 #   rm -rf /backups/base_backup/*
-#   pg_basebackup -d 'host=localhost user=#{repl_user} password=#{repl_pass}' -D /backups/base_backup --xlog-method=stream 
+#   pg_basebackup -d 'host=localhost user=#{repl_user} password=#{repl_pass}' -D /backups/base_backup --xlog-method=stream
 #   tar -czf /backups/base_backup.tgz /backups/base_backup/
 #   EOF_CBB
 #   action :run
 #   notifies :run, "ruby_block[log_create_base_backup]", :before
-#   only_if { node["chef_postgres"]["pg_config"]["pg_node"] == "master" } 
+#   only_if { node["chef_postgres"]["pg_config"]["pg_node"] == "master" }
 # end
 
 # ruby_block "s3_upload_backup" do
@@ -178,5 +188,5 @@ end
 #       { bucket: node["chef_postgres"]["s3"]["bucket"],
 #         source: "/backups/base_backup.tgz" })
 #   end
-#   only_if { node["chef_postgres"]["pg_config"]["pg_node"] == "master" } 
+#   only_if { node["chef_postgres"]["pg_config"]["pg_node"] == "master" }
 # end
