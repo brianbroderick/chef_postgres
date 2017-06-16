@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 include_recipe "chef_postgres::log_output"
 
+::Chef::Log.info("** #{node["ec2"]["local_hostname"]} **")
+
 chef_gem "aws-sdk" do
   compile_time true
 end
