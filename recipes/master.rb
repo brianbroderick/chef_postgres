@@ -5,6 +5,13 @@ node.default["chef_postgres"]["pg_config"]["pg_node"] = "master" # opts: master,
 
 include_recipe "chef_postgres::setup"
 
+version = node["chef_postgres"]["version"]
+admin_user = node["chef_postgres"]["vars"]["admin_user"] 
+admin_pass = node["chef_postgres"]["vars"]["admin_pass"] 
+admin_is_generated = node["chef_postgres"]["vars"]["admin_is_generated"]
+repl_user = node["chef_postgres"]["vars"]["repl_user"] 
+repl_pass = node["chef_postgres"]["vars"]["repl_pass"]
+
 # Build this on the master so the standbys have the right settings
 template "recovery_conf.source" do
   group "postgres"

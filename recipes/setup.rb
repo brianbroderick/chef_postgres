@@ -22,10 +22,14 @@ node.default["chef_postgres"]["pg_config"]["data_directory"] = if node["chef_pos
                                                                  "/var/lib/postgresql/#{version}/main"
                                                                end
 
-# rubocop:disable Lint/UselessAssignment
 admin_user, admin_pass, admin_is_generated = ::Chef::Provider::DbUser.call(node, "admin_login")
-repl_user, repl_pass, repl_is_generated = ::Chef::Provider::DbUser.call(node, "repl_login")
-# rubocop:enable Lint/UselessAssignment
+repl_user, repl_pass, _ = ::Chef::Provider::DbUser.call(node, "repl_login")
+
+node["chef_postgres"]["vars"]["admin_user"] = admin_user
+node["chef_postgres"]["vars"]["admin_pass"] = admin_pass
+node["chef_postgres"]["vars"]["admin_is_generated"] = admin_is_generated
+node["chef_postgres"]["vars"]["repl_user"] = repl_user
+node["chef_postgres"]["vars"]["repl_pass"] = repl_pass
 
 ::Chef::Log.info("** Setting up apt_repository to get access to the latest PG versions **")
 
