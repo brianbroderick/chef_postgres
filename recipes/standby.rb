@@ -25,7 +25,7 @@ end
 bash "move_backup_directory" do
   action :run
   code <<-EOF_MDD
-  mv /backups/base_backup/recovery_conf.source /etc/postgresql/9.6/main/recovery.conf
+  mv /backups/base_backup/recovery_conf.source #{node["chef_postgres"]["pg_config"]["data_directory"]}/recovery.conf
   mv /backups/base_backup/* #{node["chef_postgres"]["pg_config"]["data_directory"]}
   EOF_MDD
   user "postgres"
