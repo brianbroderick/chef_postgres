@@ -51,3 +51,7 @@ ruby_block "log_unzip_base_backup" do
   action :nothing
 end
 
+ruby_block "log_move_backup_directory" do
+  block { ::Chef::Log.info("** Moving Backup Directory to Data Directory **") }
+  action :nothing
+end

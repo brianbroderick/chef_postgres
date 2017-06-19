@@ -16,7 +16,24 @@ end
 
 bash "unzip_base_backup" do
   code <<-EOF_CBB
-  tar -xvzf /backups/base_backup.tgz  
+  tar -xvzf /backups/base_backup.tgz 
+  chown -R postgres:postgres /backups/base_backup/ 
   EOF_CBB
   notifies :run, "ruby_block[log_unzip_base_backup]", :before
+end
+
+bash "move_backup_directory" do
+  action :run
+  code <<-EOF_MDD
+  mv /backups/base_backup/recovery_conf.source /etc/postgresql/9.6/main/recovery.conf
+  mv /backups/base_backup/* #{node["chef_postgres"]["pg_config"]["data_directory"]}
+  EOF_MDD
+  user "postgres"
+  notifies :run, "ruby_block[log_move_backup_directory]", :before
+end
+
+service "start_postgres" do
+  action :start
+  service_name "postgresql"
+  notifies :run, "ruby_block[log_start_pg]", :before
 end
