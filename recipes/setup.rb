@@ -88,7 +88,7 @@ end
 directory "/backups/base_backup" do
   owner "root"
   group "root"
-  mode "0744"
+  mode "0755"
   recursive true
   notifies :run, "ruby_block[log_backup_directory]", :before
 end
