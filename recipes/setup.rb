@@ -22,6 +22,7 @@ node.default["chef_postgres"]["pg_config"]["data_directory"] = if node["chef_pos
                                                                  "/var/lib/postgresql/#{version}/main"
                                                                end
 
+_, pg_pass, _ = ::Chef::Provider::DbUser.call(node, "pg_login")
 admin_user, admin_pass, admin_is_generated = ::Chef::Provider::DbUser.call(node, "admin_login")
 repl_user, repl_pass, _ = ::Chef::Provider::DbUser.call(node, "repl_login")
 

@@ -6,6 +6,7 @@ node.default["chef_postgres"]["pg_config"]["pg_node"] = "master" # opts: master,
 include_recipe "chef_postgres::setup"
 
 version = node["chef_postgres"]["version"]
+pg_pass = node["chef_postgres"]["vars"]["pg_pass"] 
 admin_user = node["chef_postgres"]["vars"]["admin_user"] 
 admin_pass = node["chef_postgres"]["vars"]["admin_pass"] 
 admin_is_generated = node["chef_postgres"]["vars"]["admin_is_generated"]
@@ -58,7 +59,10 @@ end
 bash "create_admin_user" do
   action :run
   user "postgres"
-  code "echo \"CREATE USER #{admin_user} WITH PASSWORD '#{admin_pass}' SUPERUSER CREATEDB CREATEROLE; CREATE DATABASE #{admin_user} OWNER #{admin_user};\" | psql -U postgres -d postgres"
+  code <<-EOF_CAU
+    echo "ALTER USER postgres WITH PASSWORD '#{pg_pass}';" | psql -U postgres -d postgres
+    echo "CREATE USER #{admin_user} WITH PASSWORD '#{admin_pass}' SUPERUSER CREATEDB CREATEROLE; CREATE DATABASE #{admin_user} OWNER #{admin_user};" | psql -U postgres -d postgres
+  EOF_CAU
   notifies :run, "ruby_block[log_create_admin]", :before
 end
 
