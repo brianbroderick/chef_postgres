@@ -21,17 +21,13 @@ class Chef
         [admin_user, admin_pass, generated_user?]
       end
 
-      def first_letter
-        @first_letter ||= %w(a b c d e f)[rand(6)]
-      end
-
       def admin_user_default
-        # user names have to start with a letter
-        @admin_user_default ||= first_letter + ::Digest::MD5.hexdigest(seed)[0, 9]
+        # user names have to start with a letter        
+        @admin_user_default ||= random_chars(1, 26) + ::Digest::MD5.hexdigest(seed)[0, 9]
       end
 
       def admin_pass_default
-        @admin_pass_default ||= ::Digest::SHA1.hexdigest(seed)
+        @admin_pass_default ||= ::Digest::SHA1.hexdigest(seed) + random_chars(5, 30)
       end
 
       def admin_user
@@ -48,14 +44,14 @@ class Chef
 
       def seed # takes an average of 0.039 seconds to run on a MacBook Pro
         1.upto(1000+rand(1000)).reduce("") do |accum, _|
-          accum << random_letters(rand(30)) + rand.to_s
+          accum << random_chars(rand(30)) + rand.to_s
           accum
         end
       end   
 
-      def random_letters(num=1)
+      def random_chars(num=1, arr_max=52)
         1.upto(num).reduce("") do |accum, _|
-          accum << %w(a b c d e f g h i j k l m n o p q r s t u v w x y z ! , @ # $ % ^ & * - _ + = ~)[rand(40)]
+          accum << %w(a b c d e f g h i j k l m n o p q r s t u v w x y z ! @ # $ . 0. % ^ & * - _ , = ~ 0 1 2 3 4 5 6 7 8 9 +)[rand(arr_max)]
           accum
         end
       end         
