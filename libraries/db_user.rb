@@ -6,6 +6,8 @@ class Chef
     class DbUser < Chef::Provider::LWRPBase
       attr_reader :node, :login
 
+      CHAR_ARR = %w(a b c d e f g h i j k l m n o p q r s t u v w x y z ! @ # $ . 0. % ^ & * - _ , = ~ 0 1 2 3 4 5 6 7 8 9 +)
+
       def self.call(*args)
         new(*args).call
       end
@@ -51,14 +53,10 @@ class Chef
 
       def random_chars(num=1, arr_max=52)        
         1.upto(num).reduce("") do |accum, _|
-          accum << char_arr[rand(arr_max)]
+          accum << CHAR_ARR[rand(arr_max)]
           accum
         end
       end         
-
-      def char_arr
-        %w(a b c d e f g h i j k l m n o p q r s t u v w x y z ! @ # $ . 0. % ^ & * - _ , = ~ 0 1 2 3 4 5 6 7 8 9 +)
-      end      
     end
   end
 end
