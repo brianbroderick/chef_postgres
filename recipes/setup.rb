@@ -42,13 +42,13 @@ apt_repository "apt.postgresql.org" do
   action :add
 end
 
-apt_repository "debian" do
-  uri "http://ftp.us.debian.org/debian"  
-  distribution "testing"
-  components ["main", "contrib"]  
-  # deb_src true
-  action :add
-end
+# apt_repository "debian" do
+#   uri "http://ftp.us.debian.org/debian"  
+#   distribution "testing"
+#   components ["main", "contrib"]  
+#   # deb_src true
+#   action :add
+# end
 
 ::Chef::Log.info("** Installing Postgres **")
 
