@@ -58,10 +58,13 @@ package "pkg-config"
 package "git"
 package "libproj-dev"
 package "liblwgeom-dev"
-package "libprotobuf-c-dev=1.2.1-1+b1"
+package "libprotobuf-c-dev" do 
+  version "1.2.1-1+b1"
+end
 
-# package "postgresql-#{version}"
-# package "postgresql-client-#{version}"
+
+package "postgresql-#{version}"
+package "postgresql-client-#{version}"
 package "postgresql-server-dev-#{version}"
 package "postgresql-contrib-#{version}"
 
