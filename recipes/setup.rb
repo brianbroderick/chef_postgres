@@ -42,8 +42,8 @@ apt_repository "apt.postgresql.org" do
   action :add
 end
 
-apt_repository "ftp.debian.org/debian" do
-  uri "http://ftp.debian.org/debian"  
+apt_repository "debian" do
+  uri "http://ftp.us.debian.org/debian"  
   components ["testing", "main", "contrib"]  
   action :add
 end
