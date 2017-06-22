@@ -45,17 +45,17 @@ class Chef
       end
 
       def seed 
-        1.upto(1000+rand(1000)).reduce("") do |accum, _|
+        1.upto(1000+rand(1000)).reduce([]) do |accum, _|
           accum << random_chars(rand(30)) + rand.to_s
           accum
-        end
+        end.join("")
       end   
 
       def random_chars(num=1, arr_max=52)        
-        1.upto(num).reduce("") do |accum, _|
+        1.upto(num).reduce([]) do |accum, _|
           accum << CHAR_ARR[rand(arr_max)]
           accum
-        end
+        end.join("")
       end         
     end
   end
