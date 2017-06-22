@@ -59,7 +59,7 @@ package "git"
 package "libproj-dev"
 package "liblwgeom-dev"
 package "libprotobuf-c-dev" do 
-  version "1.2.1-1+b1"
+  version "1.2.1"
 end
 
 
