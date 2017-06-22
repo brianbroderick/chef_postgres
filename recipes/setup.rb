@@ -42,10 +42,24 @@ apt_repository "apt.postgresql.org" do
   action :add
 end
 
+apt_repository "ftp.debian.org/debian" do
+  uri "http://ftp.debian.org/debian"  
+  components ["testing", "main", "contrib"]  
+  action :add
+end
+
 ::Chef::Log.info("** Installing Postgres **")
 
-package "postgresql-#{version}"
-package "postgresql-client-#{version}"
+package "software-properties-common"    
+package "build-essential"
+package "pkg-config"
+package "git"
+package "libproj-dev"
+package "liblwgeom-dev"
+package "libprotobuf-c-dev=1.2.1-1+b1"
+
+# package "postgresql-#{version}"
+# package "postgresql-client-#{version}"
 package "postgresql-server-dev-#{version}"
 package "postgresql-contrib-#{version}"
 
