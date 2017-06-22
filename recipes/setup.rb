@@ -44,8 +44,9 @@ end
 
 apt_repository "debian" do
   uri "http://ftp.us.debian.org/debian"  
-  components ["testing", "main", "contrib"]  
-  deb_src true
+  distribution "testing"
+  components ["main", "contrib"]  
+  # deb_src true
   action :add
 end
 
