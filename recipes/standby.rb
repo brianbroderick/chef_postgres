@@ -16,8 +16,8 @@ end
 
 bash "unzip_base_backup" do
   code <<-EOF_CBB
-  tar -xvzf /backups/base_backup.tgz 
-  chown -R postgres:postgres /backups/base_backup/ 
+  tar -xvzf /backups/base_backup.tgz
+  chown -R postgres:postgres /backups/base_backup/
   EOF_CBB
   notifies :run, "ruby_block[log_unzip_base_backup]", :before
 end

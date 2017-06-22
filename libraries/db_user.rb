@@ -6,7 +6,7 @@ class Chef
     class DbUser < Chef::Provider::LWRPBase
       attr_reader :node, :login
 
-      CHAR_ARR = %w(a b c d e f g h i j k l m n o p q r s t u v w x y z ! @ # $ . 0. % ^ & * - _ , = ~ 0 1 2 3 4 5 6 7 8 9 +)
+      CHAR_ARR = [%w(a b c d e f g h i j k l m n o p q r s t u v w x y z ! @ # $ . 0. % ^ & * - _ , = ~ 0 1 2 3 4 5 6 7 8 9 +)].freeze
 
       def self.call(*args)
         new(*args).call
@@ -24,7 +24,7 @@ class Chef
       end
 
       def admin_user_default
-        # user names have to start with a letter        
+        # user names have to start with a letter
         @admin_user_default ||= random_chars(1, 26) + ::Digest::MD5.hexdigest(seed)[0, 9]
       end
 
@@ -44,19 +44,19 @@ class Chef
         admin_pass_default == admin_pass
       end
 
-      def seed 
-        1.upto(1000+rand(1000)).reduce([]) do |accum, _|
+      def seed
+        1.upto(1000 + rand(1000)).reduce([]) do |accum, _|
           accum << random_chars(rand(30)) + rand.to_s
           accum
         end.join("")
-      end   
+      end
 
-      def random_chars(num=1, arr_max=52)        
+      def random_chars(num = 1, arr_max = 52)
         1.upto(num).reduce([]) do |accum, _|
           accum << CHAR_ARR[rand(arr_max)]
           accum
         end.join("")
-      end         
+      end
     end
   end
 end

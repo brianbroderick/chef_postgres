@@ -22,9 +22,9 @@ node.default["chef_postgres"]["pg_config"]["data_directory"] = if node["chef_pos
                                                                  "/var/lib/postgresql/#{version}/main"
                                                                end
 
-_, pg_pass, _ = ::Chef::Provider::DbUser.call(node, "pg_login")
+# _, pg_pass, = ::Chef::Provider::DbUser.call(node, "pg_login")
 admin_user, admin_pass, admin_is_generated = ::Chef::Provider::DbUser.call(node, "admin_login")
-repl_user, repl_pass, _ = ::Chef::Provider::DbUser.call(node, "repl_login")
+repl_user, repl_pass, = ::Chef::Provider::DbUser.call(node, "repl_login")
 
 node.default["chef_postgres"]["vars"]["admin_user"] = admin_user
 node.default["chef_postgres"]["vars"]["admin_pass"] = admin_pass
@@ -43,25 +43,24 @@ apt_repository "apt.postgresql.org" do
 end
 
 # apt_repository "debian" do
-#   uri "http://ftp.us.debian.org/debian"  
+#   uri "http://ftp.us.debian.org/debian"
 #   distribution "testing"
-#   components ["main", "contrib"]  
+#   components ["main", "contrib"]
 #   # deb_src true
 #   action :add
 # end
 
 ::Chef::Log.info("** Installing Postgres **")
 
-# package "software-properties-common"    
+# package "software-properties-common"
 # package "build-essential"
 # package "pkg-config"
 # package "git"
 # package "libproj-dev"
 # package "liblwgeom-dev"
-# package "libprotobuf-c-dev" do 
+# package "libprotobuf-c-dev" do
 #   version "1.2.1"
 # end
-
 
 package "postgresql-#{version}"
 package "postgresql-client-#{version}"
