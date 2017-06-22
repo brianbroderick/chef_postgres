@@ -52,15 +52,15 @@ end
 
 ::Chef::Log.info("** Installing Postgres **")
 
-package "software-properties-common"    
-package "build-essential"
-package "pkg-config"
-package "git"
-package "libproj-dev"
-package "liblwgeom-dev"
-package "libprotobuf-c-dev" do 
-  version "1.2.1"
-end
+# package "software-properties-common"    
+# package "build-essential"
+# package "pkg-config"
+# package "git"
+# package "libproj-dev"
+# package "liblwgeom-dev"
+# package "libprotobuf-c-dev" do 
+#   version "1.2.1"
+# end
 
 
 package "postgresql-#{version}"
