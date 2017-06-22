@@ -96,8 +96,7 @@ host    all             all             0.0.0.0/0               md5
 host    all             all             ::1/128                 md5
 # Allow replication connections from localhost, by a user with the
 # replication privilege.
-#local   replication     postgres                                peer
-#host    replication     postgres        127.0.0.1/32            md5
-#host    replication     postgres        ::1/128                 md5
-
-host     replication <%= @config[:repl_user] %> 0.0.0.0/0        md5
+local   replication   <%= @config[:repl_user] %>                   trust
+host    replication   <%= @config[:repl_user] %>   127.0.0.1/32    trust
+host    replication   <%= @config[:repl_user] %>   ::1/128         trust
+host    replication   <%= @config[:repl_user] %>   0.0.0.0/0       md5
