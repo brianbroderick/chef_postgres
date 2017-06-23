@@ -47,7 +47,7 @@ when 'redhat', 'centos'
   end
 
   # Download the PGDG repository RPM as a local file
-  pdgd_package = "pgdg-centos96-9.6-3.noarch.rpm"
+  pgdg_package = "pgdg-centos96-9.6-3.noarch.rpm"
   remote_file "/tmp/postgres/config/#{pgdg_package}" do
     source "https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/#{pgdg_package}"
     mode '0644'
