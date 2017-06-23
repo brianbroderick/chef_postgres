@@ -39,10 +39,25 @@ node.default["chef_postgres"]["vars"]["repl_pass"] = repl_pass
 
 case node[:platform]
 when 'redhat', 'centos'
-  yum_repository 'pgdg-centos96-9.6-3.noarch.rpm' do
-    description "Postgres 9.6.3 Repo"
-    baseurl "https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64"    
-    action :create
+  directory "/tmp/postgres/config" do
+    owner "root"
+    group "root"
+    mode "0755"
+    recursive true    
+  end
+
+  # Download the PGDG repository RPM as a local file
+  pdgd_package = "pgdg-centos96-9.6-3.noarch.rpm"
+  remote_file "/tmp/postgres/config/#{pgdg_package}" do
+    source "https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/#{pgdg_package}"
+    mode '0644'
+  end
+
+  # Install the PGDG repository RPM from the local file
+  package pgdg_package.to_s do
+    provider Chef::Provider::Package::Rpm
+    source "/tmp/postgres/config/#{pgdg_package}"
+    action :install
   end
 
   package "postgresql#{rh_version}"  
