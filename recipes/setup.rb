@@ -101,10 +101,10 @@ end
 #   version "1.2.1"
 # end
 
-package "postgresql-#{version}"
-package "postgresql-client-#{version}"
-package "postgresql-server-dev-#{version}"
-package "postgresql-contrib-#{version}"
+# package "postgresql-#{version}"
+# package "postgresql-client-#{version}"
+# package "postgresql-server-dev-#{version}"
+# package "postgresql-contrib-#{version}"
 
 service "stop_postgres" do
   action :stop
