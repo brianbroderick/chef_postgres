@@ -39,9 +39,9 @@ node.default["chef_postgres"]["vars"]["repl_pass"] = repl_pass
 
 case node[:platform]
 when 'redhat', 'centos'
-  yum_repository 'pg-9.6.3' do
+  yum_repository 'pgdg-centos96-9.6-3.noarch.rpm' do
     description "Postgres 9.6.3 Repo"
-    baseurl "https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/pgdg-centos96-9.6-3.noarch.rpm"    
+    baseurl "https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64"    
     action :create
   end
 
@@ -49,7 +49,7 @@ when 'redhat', 'centos'
   package "postgresql#{rh_version}-server"
   package "postgresql#{rh_version}-contrib"
   package "postgresql#{rh_version}-devel"
-  
+
 when 'ubuntu', 'debian'
   apt_repository "apt.postgresql.org" do
     uri "http://apt.postgresql.org/pub/repos/apt"
