@@ -10,10 +10,12 @@ require "aws-sdk"
 node.default["chef_postgres"]["server_name"] = "default"
 node.default["chef_postgres"]["release_apt_codename"] = node["lsb"]["codename"]
 node.default["chef_postgres"]["version"] = "9.6"
+node.default["chef_postgres"]["rh_version"] = node["chef_postgres"]["version"].gsub(/[^0-9]/, "")
 node.default["chef_postgres"]["workload"] = "oltp"
 
 codename = node["chef_postgres"]["release_apt_codename"]
 version = node["chef_postgres"]["version"]
+rh_version = node["chef_postgres"]["rh_version"]
 
 node.default["chef_postgres"]["pg_config"]["data_directory_on_separate_drive"] = true
 node.default["chef_postgres"]["pg_config"]["data_directory"] = if node["chef_postgres"]["pg_config"]["data_directory_on_separate_drive"]
@@ -35,13 +37,34 @@ node.default["chef_postgres"]["vars"]["repl_pass"] = repl_pass
 
 ::Chef::Log.info("** Setting up apt_repository to get access to the latest PG versions **")
 
-apt_repository "apt.postgresql.org" do
-  uri "http://apt.postgresql.org/pub/repos/apt"
-  distribution "#{codename}-pgdg"
-  components ["main", version]
-  key "https://www.postgresql.org/media/keys/ACCC4CF8.asc"
-  action :add
+case node[:platform]
+when 'redhat', 'centos'
+  yum_repository 'pg-9.6.3' do
+    description "Postgres 9.6.3 Repo"
+    baseurl "https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/pgdg-centos96-9.6-3.noarch.rpm"    
+    action :create
+  end
+
+  package "postgresql#{rh_version}"  
+  package "postgresql#{rh_version}-server"
+  package "postgresql#{rh_version}-contrib"
+  package "postgresql#{rh_version}-devel"
+  
+when 'ubuntu', 'debian'
+  apt_repository "apt.postgresql.org" do
+    uri "http://apt.postgresql.org/pub/repos/apt"
+    distribution "#{codename}-pgdg"
+    components ["main", version]
+    key "https://www.postgresql.org/media/keys/ACCC4CF8.asc"
+    action :add
+  end
+
+  package "postgresql-#{version}"
+  package "postgresql-client-#{version}"
+  package "postgresql-server-dev-#{version}"
+  package "postgresql-contrib-#{version}"
 end
+  
 
 # apt_repository "debian" do
 #   uri "http://ftp.us.debian.org/debian"

@@ -19,7 +19,7 @@ platforms:
 suites:
   - name: default
     run_list:
-      - recipe[chef_postgres::default]
+      - recipe[chef_postgres::master]
     verifier:
       inspec_tests:
         - test/smoke/default
