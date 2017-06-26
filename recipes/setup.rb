@@ -130,6 +130,7 @@ end
 
 package "libprotobuf-c-dev" do
   version "1.2.*"
+  options "--no-install-recommends"
 end
 
 directory node["chef_postgres"]["pg_config"]["data_directory"] do
