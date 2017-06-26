@@ -35,9 +35,37 @@ node.default["chef_postgres"]["vars"]["admin_is_generated"] = admin_is_generated
 node.default["chef_postgres"]["vars"]["repl_user"] = repl_user
 node.default["chef_postgres"]["vars"]["repl_pass"] = repl_pass
 
+::Chef::Log.info("** Set up initial packages **")
+
+package "software-properties-common" do
+  options "--no-install-recommends"
+end
+
+package "build-essential" do
+  options "--no-install-recommends"
+end
+
+package "pkg-config" do
+  options "--no-install-recommends"
+end
+
+package "git" do
+  options "--no-install-recommends"
+end
+
+package "libproj-dev" do
+  options "--no-install-recommends"
+end
+
+package "liblwgeom-dev" do
+  options "--no-install-recommends"
+end
+
 ::Chef::Log.info("** Setting up apt_repository to get access to the latest PG versions **")
 
 case node[:platform]
+### CentOS doesn't fully work yet - it puts things in different pathes, which need to be updated.
+### Also this command needs to be run: sudo /usr/pgsql-9.6/bin/postgresql96-setup initdb
 when 'redhat', 'centos'
   directory "/tmp/postgres/config" do
     owner "root"
@@ -60,10 +88,14 @@ when 'redhat', 'centos'
     action :install
   end
 
+  ::Chef::Log.info("** Installing Postgres **")
+
   package "postgresql#{rh_version}"  
   package "postgresql#{rh_version}-server"
   package "postgresql#{rh_version}-contrib"
   package "postgresql#{rh_version}-devel"
+
+  # sudo /usr/pgsql-9.6/bin/postgresql96-setup initdb
 
 when 'ubuntu', 'debian'
   apt_repository "apt.postgresql.org" do
@@ -74,42 +106,30 @@ when 'ubuntu', 'debian'
     action :add
   end
 
+  ::Chef::Log.info("** Installing Postgres **")
+
   package "postgresql-#{version}"
   package "postgresql-client-#{version}"
   package "postgresql-server-dev-#{version}"
   package "postgresql-contrib-#{version}"
 end
-  
-
-# apt_repository "debian" do
-#   uri "http://ftp.us.debian.org/debian"
-#   distribution "testing"
-#   components ["main", "contrib"]
-#   # deb_src true
-#   action :add
-# end
-
-::Chef::Log.info("** Installing Postgres **")
-
-# package "software-properties-common"
-# package "build-essential"
-# package "pkg-config"
-# package "git"
-# package "libproj-dev"
-# package "liblwgeom-dev"
-# package "libprotobuf-c-dev" do
-#   version "1.2.1"
-# end
-
-# package "postgresql-#{version}"
-# package "postgresql-client-#{version}"
-# package "postgresql-server-dev-#{version}"
-# package "postgresql-contrib-#{version}"
 
 service "stop_postgres" do
   action :stop
   service_name "postgresql"
   notifies :run, "ruby_block[log_stop_pg]", :before
+end  
+
+apt_repository "debian" do
+  uri "http://ftp.us.debian.org/debian"
+  distribution "testing"
+  components ["main", "contrib"]
+  # deb_src true
+  action :add
+end
+
+package "libprotobuf-c-dev" do
+  version "1.2.*"
 end
 
 directory node["chef_postgres"]["pg_config"]["data_directory"] do
