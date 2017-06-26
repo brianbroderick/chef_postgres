@@ -124,13 +124,19 @@ apt_repository "debian" do
   uri "http://ftp.us.debian.org/debian"
   distribution "testing"
   components ["main", "contrib"]
+  key "https://ftp-master.debian.org/keys/archive-key-9.asc"
   # deb_src true
   action :add
 end
 
 package "libprotobuf-c-dev" do
   version "1.2.*"
-  options "--no-install-recommends --allow-unauthenticated"
+  options "--no-install-recommends" # --allow-unauthenticated
+end
+
+directory "/var/lib/apt/lists/" do
+  recursive true
+  action :delete
 end
 
 directory node["chef_postgres"]["pg_config"]["data_directory"] do
