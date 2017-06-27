@@ -72,11 +72,11 @@ end
 bash "compile_decoderbufs" do 
   action :run
   code <<-EOF_CDB
-  git clone https://github.com/debezium/postgres-decoderbufs -b v0.5.1 --single-branch \
-    && cd /postgres-decoderbufs \ 
-    && make && make install \
-    && cd / \ 
-    && rm -rf postgres-decoderbufs
+  git clone https://github.com/debezium/postgres-decoderbufs -b v0.5.1 --single-branch 
+  cd /postgres-decoderbufs  
+  make && make install 
+  cd /  
+  rm -rf postgres-decoderbufs
   EOF_CDB
   notifies :run, "ruby_block[log_compile_decoderbufs]", :before
 end
