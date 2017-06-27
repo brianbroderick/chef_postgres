@@ -3,7 +3,9 @@
 node.default["chef_postgres"]["pg_config"]["cluster_type"] = "hot_standby" # opts: standalone, warm_standby, hot_standby
 node.default["chef_postgres"]["pg_config"]["pg_node"] = "master" # opts: master, standby
 
+include_recipe "chef_postgres::log_output"
 include_recipe "chef_postgres::setup"
+include_recipe "chef_postgres::ubuntu"
 
 version = node["chef_postgres"]["version"]
 pg_pass = node["chef_postgres"]["vars"]["pg_pass"]
