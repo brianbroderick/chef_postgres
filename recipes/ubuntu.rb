@@ -62,7 +62,7 @@ end
 
 package "libprotobuf-c-dev" do
   version "1.2.*"
-  options "--no-install-recommends" # --allow-unauthenticated
+  options "--no-install-recommends" 
 end
 
 directory "/var/lib/apt/lists/" do

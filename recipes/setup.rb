@@ -1,10 +1,5 @@
 # frozen_string_literal: true
 
-chef_gem "aws-sdk" do
-  compile_time true
-end
-require "aws-sdk"
-
 node.default["chef_postgres"]["server_name"] = "default"
 node.default["chef_postgres"]["release_apt_codename"] = node["lsb"]["codename"]
 node.default["chef_postgres"]["version"] = "9.6"
@@ -14,11 +9,14 @@ node.default["chef_postgres"]["workload"] = "oltp"
 # codename = node["chef_postgres"]["release_apt_codename"]
 version = node["chef_postgres"]["version"]
 
+node.default["chef_postgres"]["pg_config"]["config_directory"] = "/etc/postgresql/#{version}/main"
+
+node.default["chef_postgres"]["pg_config"]["original_data_directory"] = "/var/lib/postgresql/#{version}/main"
 node.default["chef_postgres"]["pg_config"]["data_directory_on_separate_drive"] = true
 node.default["chef_postgres"]["pg_config"]["data_directory"] = if node["chef_postgres"]["pg_config"]["data_directory_on_separate_drive"]
-                                                                 "/mnt/data/postgresql/#{version}/main"
+                                                                 "/mnt/data/postgresql/#{version}/main"                                                                 
                                                                else
-                                                                 "/var/lib/postgresql/#{version}/main"
+                                                                 node["chef_postgres"]["pg_config"]["original_data_directory"]
                                                                end
 
 _, pg_pass, = ::Chef::Provider::DbUser.call(node, "pg_login")

@@ -15,7 +15,7 @@ template "pg_hba.conf" do
   group "postgres"
   mode "0640"
   owner "postgres"
-  path "/etc/postgresql/#{version}/main/pg_hba.conf"
+  path "#{node["chef_postgres"]["pg_config"]["config_directory"]}/pg_hba.conf"
   source "pg_hba_conf.erb"
   variables({ config: { repl_user: repl_user } })
   notifies :run, "ruby_block[log_copy_files]", :before
@@ -25,7 +25,7 @@ template "postgresql.conf" do
   group "postgres"
   mode "0640"
   owner "postgres"
-  path "/etc/postgresql/#{version}/main/postgresql.conf"
+  path "#{node["chef_postgres"]["pg_config"]["config_directory"]}/postgresql.conf"
   source "postgresql_conf.erb"
   variables({ config: { optimization: ::Chef::Provider::PgConfig.call(node),
                         repl: { cluster_type: node["chef_postgres"]["pg_config"]["cluster_type"],

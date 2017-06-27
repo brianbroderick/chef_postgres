@@ -1,4 +1,8 @@
 # frozen_string_literal: true
+chef_gem "aws-sdk" do
+  compile_time true
+end
+require "aws-sdk"
 
 node.default["chef_postgres"]["pg_config"]["cluster_type"] = "hot_standby" # opts: standalone, warm_standby, hot_standby
 node.default["chef_postgres"]["pg_config"]["pg_node"] = "master" # opts: master, standby
@@ -6,6 +10,7 @@ node.default["chef_postgres"]["pg_config"]["pg_node"] = "master" # opts: master,
 include_recipe "chef_postgres::log_output"
 include_recipe "chef_postgres::setup"
 include_recipe "chef_postgres::ubuntu"
+include_recipe "chef_postgres::config"
 
 version = node["chef_postgres"]["version"]
 pg_pass = node["chef_postgres"]["vars"]["pg_pass"]
