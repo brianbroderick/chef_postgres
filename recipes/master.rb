@@ -11,6 +11,7 @@ include_recipe "chef_postgres::log_output"
 include_recipe "chef_postgres::setup"
 include_recipe "chef_postgres::ubuntu"
 include_recipe "chef_postgres::config"
+include_recipe "chef_postgres::security"
 
 version = node["chef_postgres"]["version"]
 pg_pass = node["chef_postgres"]["vars"]["pg_pass"]

@@ -11,6 +11,7 @@ include_recipe "chef_postgres::log_output"
 include_recipe "chef_postgres::setup"
 include_recipe "chef_postgres::ubuntu"
 include_recipe "chef_postgres::config"
+include_recipe "chef_postgres::security"
 
 ruby_block "s3_download_backup" do
   block do
