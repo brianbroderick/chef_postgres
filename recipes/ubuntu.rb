@@ -48,7 +48,8 @@ apt_repository "debian" do
   uri "http://ftp.us.debian.org/debian"
   distribution "testing"
   components ["main", "contrib"]
-  key "https://ftp-master.debian.org/keys/archive-key-9.asc"
+  key "2B90D010"
+  keyserver "keyserver.ubuntu.com"
   # deb_src true
   action :add
 end
