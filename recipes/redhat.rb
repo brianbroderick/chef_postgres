@@ -30,4 +30,4 @@ package "postgresql#{rh_version}-server"
 package "postgresql#{rh_version}-contrib"
 package "postgresql#{rh_version}-devel"
 
-# sudo /usr/pgsql-9.6/bin/postgresql96-setup initdb
+# sudo /usr/pgsql-9.6/bin/postgresql96-setup initdb     

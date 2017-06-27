@@ -49,8 +49,7 @@ apt_repository "debian" do
   distribution "testing"
   components ["main", "contrib"]
   key "7638D0442B90D010"
-  keyserver "keyserver.ubuntu.com"
-  # deb_src true
+  keyserver "keyserver.ubuntu.com"  
   action :add
 end
 
@@ -68,4 +67,16 @@ end
 directory "/var/lib/apt/lists/" do
   recursive true
   action :delete
+end
+
+bash "compile_decoderbufs" do 
+  action :run
+  code <<-EOF_CDB
+  git clone https://github.com/debezium/postgres-decoderbufs -b v0.5.1 --single-branch \
+    && cd /postgres-decoderbufs \ 
+    && make && make install \
+    && cd / \ 
+    && rm -rf postgres-decoderbufs
+  EOF_CDB
+  notifies :run, "ruby_block[log_compile_decoderbufs]", :before
 end

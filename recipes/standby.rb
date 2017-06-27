@@ -7,7 +7,10 @@ require "aws-sdk"
 node.default["chef_postgres"]["pg_config"]["cluster_type"] = "hot_standby" # opts: standalone, warm_standby, hot_standby
 node.default["chef_postgres"]["pg_config"]["pg_node"] = "standby" # opts: master, standby
 
+include_recipe "chef_postgres::log_output"
 include_recipe "chef_postgres::setup"
+include_recipe "chef_postgres::ubuntu"
+include_recipe "chef_postgres::config"
 
 ruby_block "s3_download_backup" do
   block do

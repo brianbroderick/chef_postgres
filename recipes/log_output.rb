@@ -55,3 +55,9 @@ ruby_block "log_move_backup_directory" do
   block { ::Chef::Log.info("** Moving Backup Directory to Data Directory **") }
   action :nothing
 end
+
+ruby_block "log_compile_decoderbufs" do
+  block { ::Chef::Log.info("** Compile Decoderbufs **")}
+  action :nothing
+end
+
