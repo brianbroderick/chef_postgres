@@ -6,8 +6,8 @@ bash "iptables_ssh" do
   iptables -N LOGDROP
   iptables -A LOGDROP -j LOG
   iptables -A LOGDROP -j DROP
-  iptables -I INPUT -p tcp --dport 22 -i eth0 --syn NEW -m recent --set
-  iptables -I INPUT -p tcp --dport 22 -i eth0 --syn NEW -m recent --update --seconds 60 --hitcount 4 -j LOGDROP
+  iptables -I INPUT -p tcp --dport 22 -i eth0 --syn -m recent --set
+  iptables -I INPUT -p tcp --dport 22 -i eth0 --syn -m recent --update --seconds 60 --hitcount 4 -j LOGDROP
   EOF_ISH
   notifies :run, "ruby_block[log_set_iptables]", :before
 end
