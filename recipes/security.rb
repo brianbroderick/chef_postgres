@@ -12,6 +12,11 @@ bash "iptables_ssh" do
   notifies :run, "ruby_block[log_set_iptables]", :before
 end
 
+ruby_block "log_set_iptables" do
+  block { ::Chef::Log.info("** Set IPTables **")}
+  action :nothing
+end
+
 # iptables -I INPUT -p tcp --dport 22 -i eth0 -m state --state NEW -m recent --set
 # iptables -I INPUT -p tcp --dport 22 -i eth0 -m state --state NEW -m recent  --update --seconds 60 --hitcount 4 -j LOGDROP
  

@@ -60,11 +60,3 @@ ruby_block "log_compile_decoderbufs" do
   block { ::Chef::Log.info("** Compile Decoderbufs **")}
   action :nothing
 end
-
-ruby_block "log_set_iptables" do
-  block { ::Chef::Log.info("** Set IPTables **")}
-  action :nothing
-end
-
-
-
