@@ -30,7 +30,7 @@ class Chef
       end
 
       def admin_pass_default
-        @admin_pass_default ||= ::Digest::SHA1.hexdigest(seed) + random_chars(5, 30)
+        @admin_pass_default ||= ::Digest::SHA1.hexdigest(seed).insert(rand(40), random_chars(5, 30))
       end
 
       def admin_user
