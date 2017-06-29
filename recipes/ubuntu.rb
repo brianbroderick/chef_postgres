@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 codename = node["chef_postgres"]["release_apt_codename"]
 version = node["chef_postgres"]["version"]
 
@@ -47,9 +48,9 @@ package "postgresql-contrib-#{version}"
 apt_repository "debian" do
   uri "http://ftp.us.debian.org/debian"
   distribution "testing"
-  components ["main", "contrib"]
+  components %w(main contrib)
   key "7638D0442B90D010"
-  keyserver "keyserver.ubuntu.com"  
+  keyserver "keyserver.ubuntu.com"
   action :add
 end
 
@@ -57,11 +58,11 @@ service "stop_postgres" do
   action :stop
   service_name "postgresql"
   notifies :run, "ruby_block[log_stop_pg]", :before
-end  
+end
 
 package "libprotobuf-c-dev" do
   version "1.2.*"
-  options "--no-install-recommends" 
+  options "--no-install-recommends"
 end
 
 directory "/var/lib/apt/lists/" do
@@ -69,13 +70,13 @@ directory "/var/lib/apt/lists/" do
   action :delete
 end
 
-bash "compile_decoderbufs" do 
+bash "compile_decoderbufs" do
   action :run
   code <<-EOF_CDB
-  git clone https://github.com/debezium/postgres-decoderbufs -b v0.5.1 --single-branch 
-  cd /postgres-decoderbufs  
-  make && make install 
-  cd /  
+  git clone https://github.com/debezium/postgres-decoderbufs -b v0.5.1 --single-branch
+  cd /postgres-decoderbufs
+  make && make install
+  cd /
   rm -rf postgres-decoderbufs
   EOF_CDB
   notifies :run, "ruby_block[log_compile_decoderbufs]", :before

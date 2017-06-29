@@ -6,7 +6,8 @@ class Chef
     class DbUser < Chef::Provider::LWRPBase
       attr_reader :node, :login
 
-      CHAR_ARR = [%w(a b c d e f g h i j k l m n o p q r s t u v w x y z ! @ # $ . 0. % ^ & * - _ , = ~ 0 1 2 3 4 5 6 7 8 9 +)].freeze
+      CHAR_ARR = %w(a b c d e f g h i j k l m n o p q r s t u v w x y z ! @ # $ . 0. % ^ & * - _ , = ~ A B C D E F G H I J K L M N O P Q R S T U V W X Y Z 0 1 2 3 4 5 6 7 8 9 +).freeze
+      CHAR_LEN = CHAR_ARR.length
 
       def self.call(*args)
         new(*args).call
@@ -46,12 +47,13 @@ class Chef
 
       def seed
         1.upto(1000 + rand(1000)).reduce([]) do |accum, _|
-          accum << random_chars(rand(30)) + rand.to_s
+          rnd = (rand * rand(10000)).to_s
+          accum << random_chars(rand(30)+1) + rnd.insert(rand(rnd.length-1), random_chars(rand(5)+1))
           accum
         end.join("")
-      end
+      end      
 
-      def random_chars(num = 1, arr_max = 52)
+      def random_chars(num = 1, arr_max = CHAR_LEN)
         1.upto(num).reduce([]) do |accum, _|
           accum << CHAR_ARR[rand(arr_max)]
           accum

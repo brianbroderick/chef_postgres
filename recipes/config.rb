@@ -1,5 +1,6 @@
+# frozen_string_literal: true
+
 repl_user = node["chef_postgres"]["vars"]["repl_user"]
-version = node["chef_postgres"]["version"]
 
 directory node["chef_postgres"]["pg_config"]["data_directory"] do
   action :create
