@@ -372,15 +372,15 @@ default_statistics_target = <%= @config[:optimization][:default_statistics_targe
                                         # requires logging_collector to be on.
 
 # This is used when logging to stderr:
-#logging_collector = off                # Enable capturing of stderr and csvlog
+logging_collector = on ### default off  # Enable capturing of stderr and csvlog
                                         # into log files. Required to be on for
                                         # csvlogs.
                                         # (change requires restart)
 
 # These are only used if logging_collector is on:
-#log_directory = 'pg_log'               # directory where log files are written,
+log_directory = '/var/log/pg_log'   ### default: 'pg_log' # directory where log files are written,
                                         # can be absolute or relative to PGDATA
-#log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'        # log file name pattern,
+log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'        # log file name pattern,
                                         # can include strftime() escapes
 #log_file_mode = 0600                   # creation mode for log files,
                                         # begin with 0 to use octal notation
@@ -448,6 +448,8 @@ default_statistics_target = <%= @config[:optimization][:default_statistics_targe
                                         #   fatal
                                         #   panic (effectively off)
 
+<%# TODO make this configurable %>
+log_min_duration_statement = 0
 #log_min_duration_statement = -1        # -1 is disabled, 0 logs all statements
                                         # and their durations, > 0 logs only
                                         # statements running at least this number
@@ -457,15 +459,15 @@ default_statistics_target = <%= @config[:optimization][:default_statistics_targe
 #debug_print_rewritten = off
 #debug_print_plan = off
 #debug_pretty_print = on
-#log_checkpoints = off
+log_checkpoints = on ### default off
 
-### Changed to "on"
-log_connections = on
+log_connections = on ### default: off
 
-#log_disconnections = off
+log_disconnections = on ### default: off
 #log_duration = off
 #log_error_verbosity = default          # terse, default, or verbose messages
 #log_hostname = off
+# RDS format: %t:%r:%u@%d:[%p]:
 log_line_prefix = '%m [%p] %q%u@%d '                    # special values:
                                         #   %a = application name
                                         #   %u = user name
@@ -487,12 +489,13 @@ log_line_prefix = '%m [%p] %q%u@%d '                    # special values:
                                         #        processes
                                         #   %% = '%'
                                         # e.g. '<%= "<" %>%u%%%d>'
-#log_lock_waits = off                   # log lock waits >= deadlock_timeout
+log_lock_waits = on  ### default off    # log lock waits >= deadlock_timeout
 #log_statement = 'none'                 # none, ddl, mod, all
 #log_replication_commands = off
-#log_temp_files = -1                    # log temporary files equal or larger
+log_temp_files = 0 ### default -1       # log temporary files equal or larger
                                         # than the specified size in kilobytes;
-                                        # -1 disables, 0 logs all temp fileslog_timezone = 'UTC'
+                                        # -1 disables, 0 logs all temp files
+log_timezone = 'UTC'
 
 
 # - Process Title -
@@ -530,7 +533,7 @@ stats_temp_directory = '/var/run/postgresql/9.6-main.pg_stat_tmp'
 
 #autovacuum = on                        # Enable autovacuum subprocess?  'on'
                                         # requires track_counts to also be on.
-#log_autovacuum_min_duration = -1       # -1 disables, 0 logs all actions and
+log_autovacuum_min_duration = 0 ### default -1 # -1 disables, 0 logs all actions and
                                         # their durations, > 0 logs only
                                         # actions running at least this number
                                         # of milliseconds.
