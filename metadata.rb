@@ -2,7 +2,7 @@
 name "chef_postgres"
 maintainer "Brian Broderick"
 maintainer_email "brianbroderick19 at gmail dot com"
-license "Apache 2.0"
+license "MIT"
 description "Install and configure Postgresql on Amazon EC2"
 long_description "Install and configure Postgresql on Amazon EC2"
 version "0.1.0"
