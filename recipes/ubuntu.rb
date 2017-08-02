@@ -81,3 +81,17 @@ bash "compile_decoderbufs" do
   EOF_CDB
   notifies :run, "ruby_block[log_compile_decoderbufs]", :before
 end
+
+bash "compile_hypopg" do
+  action :run
+  code <<-EOF_CDB
+  git clone git@github.com:dalibo/hypopg.git -b master --single-branch
+  cd /hypopg
+  make install
+  cd /
+  rm -rf hypopg
+  EOF_CDB
+  notifies :run, "ruby_block[log_compile_hypopg]", :before
+end
+
+
