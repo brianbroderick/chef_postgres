@@ -12,8 +12,3 @@ bash "iptables_ssh" do
   EOF_ISH
   notifies :run, "ruby_block[log_set_iptables]", :before
 end
-
-ruby_block "log_set_iptables" do
-  block { ::Chef::Log.info("** Set IPTables **") }
-  action :nothing
-end

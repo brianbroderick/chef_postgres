@@ -8,9 +8,9 @@ node.default["chef_postgres"]["pg_config"]["cluster_type"] = "hot_standby" # opt
 node.default["chef_postgres"]["pg_config"]["pg_node"] = "standby" # opts: master, standby
 
 include_recipe "chef_postgres::log_output"
-include_recipe "chef_postgres::setup"
-include_recipe "chef_postgres::ubuntu"
-include_recipe "chef_postgres::config"
+include_recipe "chef_postgres::setup_node_defaults"
+include_recipe "chef_postgres::ubuntu_packages"
+include_recipe "chef_postgres::config_postgres"
 include_recipe "chef_postgres::security"
 
 ruby_block "s3_download_backup" do
