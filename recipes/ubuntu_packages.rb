@@ -44,6 +44,12 @@ package "postgresql-#{version}"
 package "postgresql-client-#{version}"
 package "postgresql-server-dev-#{version}"
 package "postgresql-contrib-#{version}"
+package "postgis"
+package "postgresql-#{version}-postgis-2.3"
+package "postgresql-#{version}-citus"
+package "postgresql-#{version}-partman"
+package "postgresql-#{version}-repack"
+package "postgresql-#{version}-repmgr"
 
 apt_repository "debian" do
   uri "http://ftp.us.debian.org/debian"
