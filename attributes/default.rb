@@ -16,6 +16,11 @@ default["chef_postgres"]["pg_config"]["data_directory"] = if node["chef_postgres
                                                                else
                                                                  node["chef_postgres"]["pg_config"]["original_data_directory"]
                                                                end
+default["chef_postgres"]["pg_config"]["backup_directory"] = if node["chef_postgres"]["pg_config"]["data_directory_on_separate_drive"]
+                                                                 "/mnt/data/backups"
+                                                               else
+                                                                 "/backups"
+                                                               end                                                               
 
 _, pg_pass, = ::Chef::Provider::DbUser.call(node, "pg_login")
 admin_user, admin_pass, admin_is_generated = ::Chef::Provider::DbUser.call(node, "admin_login")

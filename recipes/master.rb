@@ -19,6 +19,7 @@ admin_pass = node["chef_postgres"]["vars"]["admin_pass"]
 admin_is_generated = node["chef_postgres"]["vars"]["admin_is_generated"]
 repl_user = node["chef_postgres"]["vars"]["repl_user"]
 repl_pass = node["chef_postgres"]["vars"]["repl_pass"]
+backup_dir = node["chef_postgres"]["pg_config"]["backup_directory"]
 
 # Build this on the master so the standbys have the right settings
 template "recovery_conf.source" do
@@ -95,9 +96,9 @@ end
 
 bash "create_base_backup" do
   code <<-EOF_CBB
-  rm -rf /backups/base_backup/*
-  pg_basebackup -d 'host=localhost user=#{repl_user} password=#{repl_pass}' -D /backups/base_backup --xlog-method=stream
-  tar -czf /backups/base_backup.tgz /backups/base_backup/
+  rm -rf #{backup_dir}/base_backup/*
+  pg_basebackup -d 'host=localhost user=#{repl_user} password=#{repl_pass}' -D #{backup_dir}/base_backup --xlog-method=stream
+  tar -czf #{backup_dir}/base_backup.tgz #{backup_dir}/base_backup/
   EOF_CBB
   action :run
   notifies :run, "ruby_block[log_create_base_backup]", :before
@@ -107,6 +108,6 @@ ruby_block "s3_upload_backup" do
   block do
     ::Chef::Provider::UploadFile.call(node,
       { bucket: node["chef_postgres"]["s3"]["bucket"],
-        source: "/backups/base_backup.tgz" })
+        source: "#{backup_dir}/base_backup.tgz" })
   end
 end
