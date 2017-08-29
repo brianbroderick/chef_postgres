@@ -260,10 +260,9 @@ max_wal_senders = 4          # number of nodes + 2 (for possible reconnection at
 max_replication_slots = 4    # max number of replication slots
 <% end %>
 
-#wal_keep_segments = 0          # in logfile segments, 16MB each; 0 disables
-
 <% if @config[:repl][:pg_node] == "master" && %w(warm_standby hot_standby).include?(@config[:repl][:cluster_type]) %>
 # May remove this in favor of replication slots
+# This is a minimum number of segments.
 wal_keep_segments = <%= @config[:optimization][:wal_keep_segments] %> # in logfile segments, 16MB each; 0 disables
 <% end %>
 
