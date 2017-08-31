@@ -33,7 +33,7 @@ template "postgresql.conf" do
                                 pg_node: node["chef_postgres"]["pg_config"]["pg_node"] } } })
 end
 
-directory "/backups/base_backup" do
+directory node["chef_postgres"]["pg_config"]["backup_directory"] do
   owner "root"
   group "root"
   mode "0755"
