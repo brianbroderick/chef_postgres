@@ -7,7 +7,9 @@ class Chef
       attr_reader :node, :login
 
       CHAR_ARR = %w(a b c d e f g h i j k l m n o p q r s t u v w x y z ! @ # $ . 0. % ^ & * - _ , = ~ A B C D E F G H I J K L M N O P Q R S T U V W X Y Z 0 1 2 3 4 5 6 7 8 9 +).freeze
+      ALPHANUM_ARR = %w(a b c d e f g h i j k l m n o p q r s t u v w x y z A B C D E F G H I J K L M N O P Q R S T U V W X Y Z 0 1 2 3 4 5 6 7 8 9).freeze
       CHAR_LEN = CHAR_ARR.length
+      ALPHANUM_LEN = ALPHANUM_ARR.length
 
       def self.call(*args)
         new(*args).call
@@ -30,7 +32,7 @@ class Chef
       end
 
       def admin_pass_default
-        @admin_pass_default ||= ::Digest::SHA1.hexdigest(seed).insert(rand(40), random_chars(5, 30))
+        @admin_pass_default ||= ::Digest::SHA1.hexdigest(seed).insert(rand(40), random_alphanum_chars(5))
       end
 
       def admin_user
@@ -56,6 +58,13 @@ class Chef
       def random_chars(num = 1, arr_max = CHAR_LEN)
         1.upto(num).reduce([]) do |accum, _|
           accum << CHAR_ARR[rand(arr_max)]
+          accum
+        end.join("")
+      end
+
+      def random_alphanum_chars(num = 1, arr_max = ALPHANUM_LEN)
+        1.upto(num).reduce([]) do |accum, _|
+          accum << ALPHANUM_ARR[rand(arr_max)]
           accum
         end.join("")
       end
