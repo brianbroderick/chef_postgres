@@ -32,3 +32,6 @@ default["chef_postgres"]["vars"]["admin_pass"] = admin_pass
 default["chef_postgres"]["vars"]["admin_is_generated"] = admin_is_generated
 default["chef_postgres"]["vars"]["repl_user"] = repl_user
 default["chef_postgres"]["vars"]["repl_pass"] = repl_pass
+
+default["sysctl"]["params"]["vm"]["swappiness"] = 1
+

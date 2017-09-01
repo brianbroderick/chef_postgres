@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+include_recipe "sysctl::apply"
+
 repl_user = node["chef_postgres"]["vars"]["repl_user"]
 
 directory node["chef_postgres"]["pg_config"]["data_directory"] do
@@ -40,3 +42,4 @@ directory node["chef_postgres"]["pg_config"]["backup_directory"] do
   recursive true
   notifies :run, "ruby_block[log_backup_directory]", :before
 end
+
