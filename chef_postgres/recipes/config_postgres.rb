@@ -38,7 +38,7 @@ end
 directory node["chef_postgres"]["pg_config"]["backup_directory"] do
   owner "root"
   group "root"
-  mode "0755"
+  mode "0777"
   recursive true
   notifies :run, "ruby_block[log_backup_directory]", :before
 end

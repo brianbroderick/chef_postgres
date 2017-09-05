@@ -111,3 +111,18 @@ ruby_block "s3_upload_backup" do
         source: "#{backup_dir}/base_backup.tgz" })
   end
 end
+
+cookbook_file "Copy backup file" do
+  group "ubuntu"
+  mode "0775"
+  owner "ubuntu"
+  path "#{backup_dir}/pg_backup.sh"
+  source "pg_backup.sh"
+end
+
+cron "pg_backup.sh" do 
+  minute "0"
+  hour "7"
+  user "ubuntu"
+  command "#{backup_dir}/pg_backup.sh"
+end
