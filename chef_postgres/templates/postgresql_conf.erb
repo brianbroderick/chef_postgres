@@ -286,11 +286,12 @@ wal_keep_segments = <%= @config[:optimization][:wal_keep_segments] %> # in logfi
 # These settings are ignored on a master server.
 
 <% if @config[:repl][:pg_node] == "standby" && @config[:repl][:cluster_type] == "hot_standby" %>
-hot_standby = on
+hot_standby = on                        # "on" allows queries during recovery
+                                        # (change requires restart)
+hot_standby_feedback = on               # send info from standby to prevent
+                                        # query conflicts
 <% end %>
 
-#hot_standby = off                      # "on" allows queries during recovery
-                                        # (change requires restart)
 #max_standby_archive_delay = 30s        # max delay before canceling queries
                                         # when reading WAL from archive;
                                         # -1 allows indefinite delay
@@ -299,8 +300,7 @@ hot_standby = on
                                         # -1 allows indefinite delay
 #wal_receiver_status_interval = 10s     # send replies at least this often
                                         # 0 disables
-#hot_standby_feedback = off             # send info from standby to prevent
-                                        # query conflicts
+
 #wal_receiver_timeout = 60s             # time that receiver waits for
                                         # communication from master
                                         # in milliseconds; 0 disables
@@ -393,7 +393,7 @@ log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'        # log file name pattern,
                                         # in all cases.
 #log_rotation_age = 1d                  # Automatic rotation of logfiles will
                                         # happen after that time.  0 disables.
-#log_rotation_size = 10MB               # Automatic rotation of logfiles will
+log_rotation_size = 1024MB              # Automatic rotation of logfiles will
                                         # happen after that much log output.
                                         # 0 disables.
 
@@ -448,7 +448,7 @@ log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'        # log file name pattern,
                                         #   panic (effectively off)
 
 <%# TODO make this configurable %>
-log_min_duration_statement = 0
+log_min_duration_statement = 1000
 #log_min_duration_statement = -1        # -1 is disabled, 0 logs all statements
                                         # and their durations, > 0 logs only
                                         # statements running at least this number
@@ -467,7 +467,8 @@ log_disconnections = on ### default: off
 #log_error_verbosity = default          # terse, default, or verbose messages
 #log_hostname = off
 # RDS format: %t:%r:%u@%d:[%p]:
-log_line_prefix = '%m [%p] %q%u@%d '                    # special values:
+# log_line_prefix = '%m [%p] %q%u@%d '                   
+log_line_prefix = '%t:%r:%u@%d:[%p]:'                    # special values:
                                         #   %a = application name
                                         #   %u = user name
                                         #   %d = database name
