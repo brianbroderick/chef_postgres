@@ -1,4 +1,4 @@
-name 'chef_asdf'
+name 'asdf'
 maintainer 'Brian Broderick'
 maintainer_email "brianbroderick19 at gmail dot com"
 license 'MIT'
