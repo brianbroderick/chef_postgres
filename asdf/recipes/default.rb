@@ -1,6 +1,8 @@
 include_recipe "asdf::ubuntu_packages"
 
-directory "~/.asdf" do
+::Chef::Log.info("** Installing ASDF **")
+
+directory "/home/ubuntu/.asdf" do
   action :create
   owner "ubuntu"
   group "ubuntu"  
@@ -10,7 +12,7 @@ end
 git "asdf" do
   repository "https://github.com/asdf-vm/asdf.git"
   checkout_branch "v0.3.0"
-  destination "~/.asdf"
+  destination "/home/ubuntu/.asdf"
   user "ubuntu"
   enable_checkout false
   action :sync
