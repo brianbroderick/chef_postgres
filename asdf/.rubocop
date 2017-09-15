@@ -1,0 +1,67 @@
+AllCops:
+  TargetRubyVersion: 2.3
+  Exclude:
+    - 'tmp/**/*'
+
+Style/AlignHash:
+  Enabled: true
+  # table - left alignment of keys, hash rockets, and values
+  #   'a' => 2
+  #   'bb' => 3
+  EnforcedHashRocketStyle: key
+  # table - left alignment of keys and values
+  #   a: 0
+  #   bb: 1
+  EnforcedColonStyle: key
+
+  EnforcedLastArgumentHashStyle: always_inspect
+  SupportedLastArgumentHashStyles:
+    - always_inspect
+    - always_ignore
+    - ignore_implicit
+    - ignore_explicit
+
+Style/ClassAndModuleChildren:
+  # `compact` - combine definitions as much as possible
+  #   class Foo::Bar
+  #   end
+  #
+  # The compact style is only forced, for classes / modules with one child.
+  EnforcedStyle: compact
+
+Style/EachWithObject:
+  Enabled: false
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+  Enabled: true
+
+Style/StringLiteralsInInterpolation:
+  EnforcedStyle: double_quotes
+  Enabled: true
+
+# Prefer :sym => value syntax
+Style/HashSyntax:
+  Enabled: true
+
+Style/MethodDefParentheses:
+  EnforcedStyle: require_parentheses
+  Enabled: true
+
+BracesAroundHashParameters:
+  EnforcedStyle: braces
+
+Style/Documentation:
+  Enabled: false
+
+Metrics/LineLength:
+  Max: 140
+
+Metrics/ClassLength:
+  Max: 150
+
+Metrics/AbcSize:
+  Max: 20
+
+Metrics/MethodLength:
+  Max: 20
