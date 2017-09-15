@@ -17,3 +17,11 @@ git "asdf" do
   enable_checkout false
   action :sync
 end
+
+bash "add_to_bashrc" do
+  action :run
+  code <<-EOF_ADB
+  echo -e '\n. $HOME/.asdf/asdf.sh' >> ~/.bashrc
+  EOF_ADB
+  user "ubuntu"
+end
