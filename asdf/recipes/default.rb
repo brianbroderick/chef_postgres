@@ -27,30 +27,30 @@ end
 
 bash "add_plugins" do
   user "ubuntu"
-  code "asdf plugin-add erlang
-        asdf plugin-add elixir
-        asdf plugin-add ruby"
+  code "#{node["asdf"]["asdf_location"]} plugin-add erlang
+        #{node["asdf"]["asdf_location"]} plugin-add elixir
+        #{node["asdf"]["asdf_location"]} plugin-add ruby"
   notifies :run, "ruby_block[add_plugins]", :before      
 end
 
 bash "install_erlang" do
   user "ubuntu"
-  code "asdf install erlang 20.0
-        asdf global erlang 20.0"
+  code "#{node["asdf"]["asdf_location"]} install erlang 20.0
+        #{node["asdf"]["asdf_location"]} global erlang 20.0"
   notifies :run, "ruby_block[install_erlang]", :before      
 end
 
 bash "install_elixir" do
   user "ubuntu"
-  code "asdf install elixir 1.5.1
-        asdf global elixir 1.5.1"
+  code "#{node["asdf"]["asdf_location"]} install elixir 1.5.1
+        #{node["asdf"]["asdf_location"]} global elixir 1.5.1"
   notifies :run, "ruby_block[install_elixir]", :before      
 end
 
 bash "install_ruby" do
   user "ubuntu"
-  code "asdf install ruby 2.4.2
-        asdf global ruby 2.4.2"
+  code "#{node["asdf"]["asdf_location"]} install ruby 2.4.2
+        #{node["asdf"]["asdf_location"]} global ruby 2.4.2"
   notifies :run, "ruby_block[install_ruby]", :before       
 end
       
