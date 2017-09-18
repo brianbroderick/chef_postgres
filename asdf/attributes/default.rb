@@ -1,0 +1,1 @@
+default["asdf"]["ubuntu_home_dir"] = "/home/ubuntu"
