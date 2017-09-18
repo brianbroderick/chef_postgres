@@ -27,3 +27,18 @@ ruby_block "install_ruby" do
   block { ::Chef::Log.info("** Installing Ruby **") }
   action :nothing
 end
+
+ruby_block "global_erlang" do
+  block { ::Chef::Log.info("** Setting Global Erlang **") }
+  action :nothing
+end
+
+ruby_block "global_elixir" do
+  block { ::Chef::Log.info("** Setting Global Elixir **") }
+  action :nothing
+end
+
+ruby_block "global_ruby" do
+  block { ::Chef::Log.info("** Setting Global Ruby **") }
+  action :nothing
+end
