@@ -29,8 +29,8 @@ end
 bash "add_plugins" do
   environment ({ 'HOME' => ::Dir.home("ubuntu"), 'USER' => "ubuntu" })
   user "ubuntu"
-  code "asdf plugin-add erlang
-        asdf plugin-add elixir
-        asdf plugin-add ruby"
+  code "#{node["asdf"]["asdf_location"]} plugin-add erlang
+        #{node["asdf"]["asdf_location"]} plugin-add elixir
+        #{node["asdf"]["asdf_location"]} plugin-add ruby"
   notifies :run, "ruby_block[add_plugins]", :before      
 end
