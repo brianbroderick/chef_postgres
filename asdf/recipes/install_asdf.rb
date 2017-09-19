@@ -11,7 +11,7 @@ git "asdf" do
   environment ({ 'HOME' => ::Dir.home("ubuntu"), 'USER' => "ubuntu" })
   repository "https://github.com/asdf-vm/asdf.git"
   checkout_branch "v0.3.0"
-  destination "~/.asdf"
+  destination "#{node['asdf']['ubuntu_home_dir']}/.asdf"
   user "ubuntu"
   enable_checkout false
   action :sync
