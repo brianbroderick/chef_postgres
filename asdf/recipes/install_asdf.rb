@@ -1,7 +1,6 @@
 include_recipe "asdf::log_output"
 
-directory "~/.asdf" do
-  environment ({ 'HOME' => ::Dir.home("ubuntu"), 'USER' => "ubuntu" })
+directory "#{node['asdf']['ubuntu_home_dir']}/.asdf" do  
   action :create
   owner "ubuntu"
   group "ubuntu"  
