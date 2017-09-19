@@ -1,19 +1,22 @@
 include_recipe "asdf::log_output"
 
 bash "install_erlang" do  
-  cwd  "#{node['asdf']['ubuntu_home_dir']}"
+  environment ({ 'HOME' => ::Dir.home("ubuntu"), 'USER' => "ubuntu" })
+  user "ubuntu"
   code "#{node["asdf"]["asdf_location"]} install erlang 20.0"
   notifies :run, "ruby_block[install_erlang]", :before      
 end
 
-bash "install_elixir" do  
-  cwd  "#{node['asdf']['ubuntu_home_dir']}"
+bash "install_elixir" do 
+  environment ({ 'HOME' => ::Dir.home("ubuntu"), 'USER' => "ubuntu" })
+  user "ubuntu" 
   code "#{node["asdf"]["asdf_location"]} install elixir 1.5.1"
   notifies :run, "ruby_block[install_elixir]", :before      
 end
 
 bash "install_ruby" do  
-  cwd  "#{node['asdf']['ubuntu_home_dir']}"
+  environment ({ 'HOME' => ::Dir.home("ubuntu"), 'USER' => "ubuntu" })
+  user "ubuntu"
   code "#{node["asdf"]["asdf_location"]} install ruby 2.4.2"
   notifies :run, "ruby_block[install_ruby]", :before       
 end
