@@ -42,3 +42,8 @@ ruby_block "global_ruby" do
   block { ::Chef::Log.info("** Setting Global Ruby **") }
   action :nothing
 end
+
+ruby_block "install_codedeploy" do
+  block { ::Chef::Log.info("** Installing Codedeploy **") }
+  action :nothing
+end

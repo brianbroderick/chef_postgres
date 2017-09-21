@@ -1,0 +1,162 @@
+{
+  "mappings": {
+    "_default_": {
+      "_all": {
+        "norms": false
+      },
+      "_meta": {
+        "version": "5.5.0"
+      },
+      "date_detection": false,
+      "dynamic_templates": [
+        {
+          "strings_as_keyword": {
+            "mapping": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
+            "match_mapping_type": "string"
+          }
+        }
+      ],
+      "properties": {
+        "@timestamp": {
+          "type": "date"
+        },  
+        "db_duration": {
+          "type": "float"
+        },  
+        "db_duration_unit": {
+          "ignore_above": 1024,
+          "type": "keyword"
+        },
+        "db_name": {
+          "ignore_above": 1024,
+          "type": "keyword"    
+        },
+        "db_normalized_query": {
+          "type": "keyword",
+          "norms": false      
+        },
+        "db_query": {
+          "type": "text",
+          "norms": false
+        },  
+        "db_query_date": {          
+          "type": "date",
+          "format": "yyyy-MM-dd HH:mm:ss z||yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+        },   
+        "db_remote_ip_addr": {
+          "type": "ip"
+        },     
+        "db_remote_port": {
+          "type": "integer"
+        },  
+        "db_sample_percentage": {
+          "type": "byte"
+        },   
+        "db_username": {
+          "ignore_above": 1024,
+          "type": "keyword"
+        },
+        "beat": {
+          "properties": {
+            "hostname": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
+            "name": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
+            "version": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            }
+          }
+        },
+        "error": {
+          "ignore_above": 1024,
+          "type": "keyword"
+        },
+        "fileset": {
+          "properties": {
+            "module": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
+            "name": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            }
+          }
+        },
+        "input_type": {
+          "ignore_above": 1024,
+          "type": "keyword"
+        },
+        "message": {
+          "norms": false,
+          "type": "text"
+        },
+        "meta": {
+          "properties": {
+            "cloud": {
+              "properties": {
+                "availability_zone": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                },
+                "instance_id": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                },
+                "machine_type": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                },
+                "project_id": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                },
+                "provider": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                },
+                "region": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                }
+              }
+            }
+          }
+        },                
+        "offset": {
+          "type": "long"
+        },
+        "read_timestamp": {
+          "ignore_above": 1024,
+          "type": "keyword"
+        },
+        "source": {
+          "ignore_above": 1024,
+          "type": "keyword"
+        },        
+        "tags": {
+          "ignore_above": 1024,
+          "type": "keyword"
+        },
+        "type": {
+          "ignore_above": 1024,
+          "type": "keyword"
+        }
+      }
+    }
+  },
+  "order": 0,
+  "settings": {
+    "index.mapping.total_fields.limit": 10000,
+    "index.refresh_interval": "5s"
+  },
+  "template": "filebeat-*"
+}

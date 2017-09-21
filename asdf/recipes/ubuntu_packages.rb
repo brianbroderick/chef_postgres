@@ -16,3 +16,4 @@ package "libyaml-dev"
 package "libxslt-dev"
 package "m4"
 package "unixodbc-dev"
+package "ruby" # so sudo has ruby available
