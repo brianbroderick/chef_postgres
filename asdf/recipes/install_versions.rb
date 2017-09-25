@@ -20,3 +20,10 @@ bash "install_ruby" do
   code "#{node["asdf"]["asdf_location"]} install ruby 2.4.2"
   notifies :run, "ruby_block[install_ruby]", :before       
 end
+
+bash "install_hex" do 
+  environment ({ 'HOME' => ::Dir.home("ubuntu"), 'USER' => "ubuntu" })
+  user "ubuntu"
+  code "/home/ubuntu/.asdf/shims/mix local.hex --force"
+  notifies :run, "ruby_block[install_ruby]", :before
+end
