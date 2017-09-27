@@ -1,3 +1,4 @@
+include_recipe "asdf::log_output"
 
 bash "install_hex" do 
   environment ({ 'HOME' => ::Dir.home("ubuntu"), 'USER' => "ubuntu" })
