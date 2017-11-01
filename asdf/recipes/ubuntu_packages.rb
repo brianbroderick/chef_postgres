@@ -18,6 +18,8 @@ package "m4"
 package "unixodbc-dev"
 package "nodejs-legacy"
 package "npm"
+package "rabbitmq-server"
+package "redis-server"
 
 version = node["asdf"]["postgres_version"]
 codename = node["asdf"]["release_apt_codename"]
@@ -32,6 +34,8 @@ end
 
 package "postgresql-client-common"
 package "postgresql-client-#{version}"
+package "postgresql-common"
+package "postgresql-server-dev-#{version}"
 
 bash "install_brunch" do
   cwd "/home/ubuntu"
