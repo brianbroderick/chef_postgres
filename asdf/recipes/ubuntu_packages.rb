@@ -16,12 +16,9 @@ package "libyaml-dev"
 package "libxslt-dev"
 package "m4"
 package "unixodbc-dev"
-package "nodejs-legacy"
-package "npm"
-package "rabbitmq-server"
-package "redis-server"
+package "ruby" # so sudo has ruby available
 
-version = node["asdf"]["postgres_version"]
+version = node["asdf"]["version"]
 codename = node["asdf"]["release_apt_codename"]
 
 apt_repository "apt.postgresql.org" do
@@ -34,10 +31,3 @@ end
 
 package "postgresql-client-common"
 package "postgresql-client-#{version}"
-package "postgresql-common"
-package "postgresql-server-dev-#{version}"
-
-bash "install_brunch" do
-  cwd "/home/ubuntu"
-  code "npm install -g brunch"
-end
