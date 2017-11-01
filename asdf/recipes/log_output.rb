@@ -28,6 +28,11 @@ ruby_block "install_ruby" do
   action :nothing
 end
 
+ruby_block "install_hex" do
+  block { ::Chef::Log.info("** Installing Hex **") }
+  action :nothing
+end
+
 ruby_block "global_erlang" do
   block { ::Chef::Log.info("** Setting Global Erlang **") }
   action :nothing
