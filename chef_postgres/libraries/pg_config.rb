@@ -40,17 +40,17 @@ class Chef
       end
 
       def max_connections
-        { web:  connection_math(10),
-          oltp: connection_math(10),
-          dw:   connection_math(20),
-          mixed: connection_math(15),
-          desktop: (connection_math(10) / 4).to_i }.fetch(workload)
+        { web:  [500, connection_math(10)].min,
+          oltp: [500, connection_math(10)].min,
+          dw:   [100, connection_math(30)].min,
+          mixed: [200, connection_math(15)].min,
+          desktop: [50, connection_math(20)].min }.fetch(workload)
       end
 
       def connection_math(desired_work_mem)
         # round to the nearest 10 connections using desired_work_mem in MB as a guide.
         # For example, if you have 990 MB of memory and want a desired_work_mem around 10MB, this will return 100
-        (memory / desired_work_mem).round(-1)
+        (effective_cache / desired_work_mem).round(-1)
       end
 
       def ohai_memory
@@ -88,32 +88,48 @@ class Chef
         ::BinaryRound.call(buffers)
       end
 
-      def effective_cache_size
+      def effective_cache_size_large
+        # For machines with more than 16GB of RAM, leave 4GB for the OS and other apps for dedicated DB servers.
+        { web: memory - 4096,
+          oltp: memory - 4096,
+          dw: memory - 4096,
+          mixed: memory - 4096,
+          desktop: memory / 4,
+        }.fetch(workload)
+      end      
+
+      def effective_cache_size_small
+        { web: memory * 3 / 4,
+          oltp: memory * 3 / 4,
+          dw: memory * 3 / 4,
+          mixed: memory * 3 / 4,
+          desktop: memory / 4,
+        }.fetch(workload)
+      end   
+
+      def effective_cache
         # Estimate of how much memory is available for disk caching by the operating system
         # and within the database itself, after taking into account what's used by the OS itself
         # and other applications
 
-        cache = { web: memory * 3 / 4,
-                  oltp: memory * 3 / 4,
-                  dw: memory * 3 / 4,
-                  mixed: memory * 3 / 4,
-                  desktop: memory / 4,
-                }.fetch(workload)
+        @effective_cache ||= (memory > 16384) ? effective_cache_size_large : effective_cache_size_small
+      end         
 
-        ::BinaryRound.call(cache)
+      def effective_cache_size        
+        ::BinaryRound.call(effective_cache)
       end
 
       def work_memory
         # This size is applied to each and every sort done by each user,
         # and complex queries can use multiple working memory sort buffers.
 
-        memory_per_connection = (memory.to_f / max_connections).ceil
+        memory_per_connection = (effective_cache.to_f / max_connections).ceil
 
-        work_mem = { web: memory_per_connection,
-                     oltp: memory_per_connection,
-                     dw: memory_per_connection * 0.85,
-                     mixed: memory_per_connection * 0.85,
-                     desktop: memory_per_connection * 0.15,
+        work_mem = { web: [20, memory_per_connection].min,
+                     oltp: [20, memory_per_connection].min,
+                     dw: [60, memory_per_connection * 0.85].min,
+                     mixed: [30, memory_per_connection * 0.85].min,
+                     desktop: [20, memory_per_connection * 0.15].min,
                    }.fetch(workload)
 
         ::BinaryRound.call(work_mem)
@@ -123,13 +139,13 @@ class Chef
         # Specifies the maximum amount of memory to be used by maintenance operations, such as VACUUM, CREATE INDEX
 
         maintenance_work_mem =
-          [{ web: memory / 16,
-             oltp: memory / 16,
-             dw: memory / 8,
-             mixed: memory / 16,
-             desktop: memory / 16,
+          [{ web: effective_cache / 12,
+             oltp: effective_cache / 12,
+             dw: effective_cache / 6,
+             mixed: effective_cache / 12,
+             desktop: effective_cache / 24,
            }.fetch(workload),
-           1024,
+           4096,
           ].min
 
         ::BinaryRound.call(maintenance_work_mem)
