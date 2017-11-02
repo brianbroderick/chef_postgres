@@ -3,6 +3,9 @@
 node.default["chef_postgres"]["pg_config"]["cluster_type"] = "hot_standby" # opts: standalone, warm_standby, hot_standby
 node.default["chef_postgres"]["pg_config"]["pg_node"] = "master" # opts: master, standby
 
+codename = node["chef_postgres"]["release_apt_codename"]
+version = node["chef_postgres"]["version"]
+
 include_recipe "chef_postgres::log_output"
 
 ::Chef::Log.info("** Install essential build tools **")
