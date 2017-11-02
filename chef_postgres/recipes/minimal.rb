@@ -49,6 +49,17 @@ package "postgresql-client-#{version}"
 package "postgresql-server-dev-#{version}"
 package "postgresql-contrib-#{version}"
 
+service "stop_postgres" do
+  action :stop
+  service_name "postgresql"
+  notifies :run, "ruby_block[log_stop_pg]", :before
+end
+
+package "libprotobuf-c-dev" do
+  version "1.2.*"
+  options "--no-install-recommends"
+end
+
 include_recipe "chef_postgres::config_postgres"
 
 pg_pass = node["chef_postgres"]["vars"]["pg_pass"]
