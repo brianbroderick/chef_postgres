@@ -36,7 +36,10 @@
 # MODULES
 #------------------------------------------------------------------------------
 
-shared_preload_libraries = 'decoderbufs'
+shared_preload_libraries = 'decoderbufs, redislog'
+
+# hardcoded to test
+redislog.hosts = 'pg-logs.ielpdo.0001.usw2.cache.amazonaws.com'
 
 #------------------------------------------------------------------------------
 # FILE LOCATIONS
