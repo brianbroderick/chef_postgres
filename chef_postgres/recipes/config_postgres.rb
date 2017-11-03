@@ -26,7 +26,7 @@ end
 
 template "postgresql.conf" do
   group "postgres"
-  mode "0640"
+  mode "0644"
   owner "postgres"
   path "#{node["chef_postgres"]["pg_config"]["config_directory"]}/postgresql.conf"
   source "postgresql_conf.erb"

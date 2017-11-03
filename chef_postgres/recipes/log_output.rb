@@ -31,6 +31,11 @@ ruby_block "log_start_pg" do
   action :nothing
 end
 
+ruby_block "log_restart_pg" do
+  block { ::Chef::Log.info("** Restarting Postgres **") }
+  action :nothing
+end
+
 ruby_block "log_create_admin" do
   block { ::Chef::Log.info("** Create Admin User **") }
   action :nothing
@@ -63,6 +68,11 @@ end
 
 ruby_block "log_compile_hypopg" do
   block { ::Chef::Log.info("** Compile HypoPG **") }
+  action :nothing
+end
+
+ruby_block "log_compile_redislog" do
+  block { ::Chef::Log.info("** Compile RedisLog **") }
   action :nothing
 end
 

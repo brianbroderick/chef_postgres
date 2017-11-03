@@ -126,3 +126,9 @@ cron "pg_backup.sh" do
   user "ubuntu"
   command "#{backup_dir}/pg_backup.sh"
 end
+
+service "restart_postgres" do
+  action :restart
+  service_name "postgresql"
+  notifies :run, "ruby_block[log_restart_pg]", :before
+end
