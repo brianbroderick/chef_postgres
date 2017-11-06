@@ -8,6 +8,7 @@ version = node["chef_postgres"]["version"]
 package "libssl-dev"
 package "libkrb5-dev"
 package "libhiredis-dev"
+package "redis-server"
 
 # For Debezium / Decoderbufs
 
@@ -110,7 +111,7 @@ end
 bash "compile_redislog" do
   action :run
   code <<-EOF_CDB
-  git clone https://github.com/2ndquadrant-it/redislog.git -b master --single-branch
+  git clone https://github.com/brianbroderick/redislog.git -b master --single-branch
   cd /redislog
   make && make install
   cd /

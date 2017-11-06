@@ -36,10 +36,15 @@
 # MODULES
 #------------------------------------------------------------------------------
 
-shared_preload_libraries = 'decoderbufs, redislog'
+<% unless @config[:libs][:shared].empty? 
+     shared = @config[:libs][:shared].is_a(Array) ? @config[:libs][:shared].join(",") : @config[:libs][:shared] %>
+shared_preload_libraries = '<%= shared %>'
+<% end %>
 
-# hardcoded to test
-redislog.hosts = 'pg-logs.ielpdo.0001.usw2.cache.amazonaws.com'
+<% unless @config[:libs][:redislog_hosts].empty? 
+     redislog_hosts =  @config[:libs][:redislog_hosts].is_a(Array) ? @config[:libs][:redislog_hosts].join(",") : @config[:libs][:redislog_hosts] %>
+redislog.hosts = '<%= @config[:libs][:redislog_hosts] %>'
+<% end %>
 
 #------------------------------------------------------------------------------
 # FILE LOCATIONS

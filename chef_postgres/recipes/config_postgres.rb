@@ -32,7 +32,10 @@ template "postgresql.conf" do
   source "postgresql_conf.erb"
   variables({ config: { optimization: ::Chef::Provider::PgConfig.call(node),
                         repl: { cluster_type: node["chef_postgres"]["pg_config"]["cluster_type"],
-                                pg_node: node["chef_postgres"]["pg_config"]["pg_node"] } } })
+                                pg_node: node["chef_postgres"]["pg_config"]["pg_node"] },
+                        libs: { shared: node["chef_postgres"]["libs"]["shared"],
+                                redislog_hosts: node["chef_postgres"]["libs"]["redislog_hosts"] }     # pg-logs.ielpdo.0001.usw2.cache.amazonaws.com    
+                              } })
 end
 
 directory node["chef_postgres"]["pg_config"]["backup_directory"] do

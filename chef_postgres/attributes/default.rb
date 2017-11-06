@@ -35,3 +35,9 @@ default["chef_postgres"]["vars"]["repl_pass"] = repl_pass
 
 default["sysctl"]["params"]["vm"]["swappiness"] = 1
 
+# Redislog
+default["chef_postgres"]["libs"]["shared"] = "decoderbufs"
+default["chef_postgres"]["libs"]["redislog_hosts"] = ""
+
+
+
