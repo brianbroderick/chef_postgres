@@ -35,15 +35,3 @@ bash "root_global_ruby" do
   code "#{node["asdf"]["root_asdf_location"]} global ruby #{node["asdf"]["ruby_version"]}"
   notifies :run, "ruby_block[global_ruby]", :before
 end
-
-bash "global_go" do
-  environment ({ 'HOME' => ::Dir.home("ubuntu"), 'USER' => "ubuntu" })
-  user "ubuntu"
-  code "#{node["asdf"]["asdf_location"]} global golang #{node["asdf"]["golang_version"]}"
-  notifies :run, "ruby_block[global_golang]", :before
-end
-
-bash "root_global_go" do
-  code "#{node["asdf"]["root_asdf_location"]} global golang #{node["asdf"]["golang_version"]}"
-  notifies :run, "ruby_block[global_golang]", :before
-end

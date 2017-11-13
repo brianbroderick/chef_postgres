@@ -43,15 +43,3 @@ bash "root_install_ruby" do
   code "#{node["asdf"]["root_asdf_location"]} install ruby #{node["asdf"]["ruby_version"]}"
   notifies :run, "ruby_block[install_ruby]", :before
 end
-
-bash "install_golang" do
-  environment ({ 'HOME' => ::Dir.home("ubuntu"), 'USER' => "ubuntu" })
-  user "ubuntu"
-  code "#{node["asdf"]["asdf_location"]} install golang #{node["asdf"]["golang_version"]}"
-  notifies :run, "ruby_block[install_golang]", :before
-end
-
-bash "root_install_golang" do
-  code "#{node["asdf"]["root_asdf_location"]} install golang #{node["asdf"]["golang_version"]}"
-  notifies :run, "ruby_block[install_golang]", :before
-end

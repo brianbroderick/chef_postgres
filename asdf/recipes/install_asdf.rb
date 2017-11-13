@@ -53,7 +53,6 @@ bash "add_plugins" do
   code "#{node["asdf"]["asdf_location"]} plugin-add erlang
         #{node["asdf"]["asdf_location"]} plugin-add elixir
         #{node["asdf"]["asdf_location"]} plugin-add ruby
-        #{node["asdf"]["asdf_location"]} plugin-add golang https://github.com/kennyp/asdf-golang.git
         exit 0"
   notifies :run, "ruby_block[add_plugins]", :before
 end
@@ -63,7 +62,6 @@ bash "add_plugins_for_root" do
   code "#{node["asdf"]["root_asdf_location"]} plugin-add erlang
         #{node["asdf"]["root_asdf_location"]} plugin-add elixir
         #{node["asdf"]["root_asdf_location"]} plugin-add ruby
-        #{node["asdf"]["root_asdf_location"]} plugin-add golang https://github.com/kennyp/asdf-golang.git
         exit 0"
   notifies :run, "ruby_block[add_plugins]", :before
 end
