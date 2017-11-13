@@ -46,20 +46,24 @@ bash "root_add_to_bashrc" do
   notifies :run, "ruby_block[add_asdf_to_bashrc]", :before
 end
 
+# Force a successful exit for idempotence
 bash "add_plugins" do
   environment ({ 'HOME' => ::Dir.home("ubuntu"), 'USER' => "ubuntu" })
   user "ubuntu"
   code "#{node["asdf"]["asdf_location"]} plugin-add erlang
         #{node["asdf"]["asdf_location"]} plugin-add elixir
         #{node["asdf"]["asdf_location"]} plugin-add ruby
-        #{node["asdf"]["asdf_location"]} plugin-add golang https://github.com/kennyp/asdf-golang.git"
+        #{node["asdf"]["asdf_location"]} plugin-add golang https://github.com/kennyp/asdf-golang.git
+        exit 0"
   notifies :run, "ruby_block[add_plugins]", :before
 end
 
+# Force a successful exit for idempotence
 bash "add_plugins_for_root" do
   code "#{node["asdf"]["root_asdf_location"]} plugin-add erlang
         #{node["asdf"]["root_asdf_location"]} plugin-add elixir
         #{node["asdf"]["root_asdf_location"]} plugin-add ruby
-        #{node["asdf"]["root_asdf_location"]} plugin-add golang https://github.com/kennyp/asdf-golang.git"
+        #{node["asdf"]["root_asdf_location"]} plugin-add golang https://github.com/kennyp/asdf-golang.git
+        exit 0"
   notifies :run, "ruby_block[add_plugins]", :before
 end
