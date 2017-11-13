@@ -52,3 +52,19 @@ ruby_block "install_codedeploy" do
   block { ::Chef::Log.info("** Installing Codedeploy **") }
   action :nothing
 end
+
+ruby_block "log_stop_pg" do
+  block { ::Chef::Log.info("** Stopping Postgres **") }
+  action :nothing
+end
+
+ruby_block "log_stop_redis" do
+  block { ::Chef::Log.info("** Stopping Redis **") }
+  action :nothing
+end
+
+ruby_block "log_stop_rabbit" do
+  block { ::Chef::Log.info("** Stopping Rabbit **") }
+  action :nothing
+end
+

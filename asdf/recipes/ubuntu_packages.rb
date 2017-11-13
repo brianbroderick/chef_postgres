@@ -41,3 +41,22 @@ bash "install_brunch" do
   cwd "/home/ubuntu"
   code "npm install -g brunch"
 end
+
+service "stop_postgres" do
+  action :stop
+  service_name "postgresql"
+  notifies :run, "ruby_block[log_stop_pg]", :before
+end
+
+service "stop_redis" do
+  action :stop
+  service_name "redis"
+  notifies :run, "ruby_block[log_stop_redis]", :before
+end
+
+service "stop_rabbitmq_server" do
+  action :stop
+  service_name "rabbitmq-server"
+  notifies :run, "ruby_block[log_stop_rabbit]", :before
+end
+
