@@ -1,37 +1,49 @@
 include_recipe "asdf::log_output"
 
-bash "global_erlang" do  
+bash "global_erlang" do
   environment ({ 'HOME' => ::Dir.home("ubuntu"), 'USER' => "ubuntu" })
-  user "ubuntu"  
+  user "ubuntu"
   code "#{node["asdf"]["asdf_location"]} global erlang #{node["asdf"]["erlang_version"]}"
-  notifies :run, "ruby_block[global_erlang]", :before      
+  notifies :run, "ruby_block[global_erlang]", :before
 end
 
-bash "root_global_erlang" do  
+bash "root_global_erlang" do
   code "#{node["asdf"]["root_asdf_location"]} global erlang #{node["asdf"]["erlang_version"]}"
-  notifies :run, "ruby_block[global_erlang]", :before      
+  notifies :run, "ruby_block[global_erlang]", :before
 end
 
-bash "global_elixir" do  
+bash "global_elixir" do
   environment ({ 'HOME' => ::Dir.home("ubuntu"), 'USER' => "ubuntu" })
-  user "ubuntu"  
+  user "ubuntu"
   code "#{node["asdf"]["asdf_location"]} global elixir #{node["asdf"]["elixir_version"]}"
-  notifies :run, "ruby_block[global_elixir]", :before      
+  notifies :run, "ruby_block[global_elixir]", :before
 end
 
-bash "root_global_elixir" do  
+bash "root_global_elixir" do
   code "#{node["asdf"]["root_asdf_location"]} global elixir #{node["asdf"]["elixir_version"]}"
-  notifies :run, "ruby_block[global_elixir]", :before      
+  notifies :run, "ruby_block[global_elixir]", :before
 end
 
-bash "global_ruby" do  
+bash "global_ruby" do
   environment ({ 'HOME' => ::Dir.home("ubuntu"), 'USER' => "ubuntu" })
-  user "ubuntu"  
+  user "ubuntu"
   code "#{node["asdf"]["asdf_location"]} global ruby #{node["asdf"]["ruby_version"]}"
-  notifies :run, "ruby_block[global_ruby]", :before       
+  notifies :run, "ruby_block[global_ruby]", :before
 end
 
-bash "root_global_ruby" do  
+bash "root_global_ruby" do
   code "#{node["asdf"]["root_asdf_location"]} global ruby #{node["asdf"]["ruby_version"]}"
-  notifies :run, "ruby_block[global_ruby]", :before       
+  notifies :run, "ruby_block[global_ruby]", :before
+end
+
+bash "global_go" do
+  environment ({ 'HOME' => ::Dir.home("ubuntu"), 'USER' => "ubuntu" })
+  user "ubuntu"
+  code "#{node["asdf"]["asdf_location"]} global golang #{node["asdf"]["golang_version"]}"
+  notifies :run, "ruby_block[global_golang]", :before
+end
+
+bash "root_global_go" do
+  code "#{node["asdf"]["root_asdf_location"]} global golang #{node["asdf"]["golang_version"]}"
+  notifies :run, "ruby_block[global_golang]", :before
 end

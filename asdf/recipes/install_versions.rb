@@ -1,45 +1,57 @@
 include_recipe "asdf::log_output"
 
-bash "install_erlang" do  
+bash "install_erlang" do
   environment ({ 'HOME' => ::Dir.home("ubuntu"), 'USER' => "ubuntu" })
   user "ubuntu"
   code "#{node["asdf"]["asdf_location"]} install erlang #{node["asdf"]["erlang_version"]}"
-  notifies :run, "ruby_block[install_erlang]", :before      
+  notifies :run, "ruby_block[install_erlang]", :before
 end
 
-bash "root_install_erlang" do  
+bash "root_install_erlang" do
   code "#{node["asdf"]["root_asdf_location"]} install erlang #{node["asdf"]["erlang_version"]}"
-  notifies :run, "ruby_block[install_erlang]", :before      
+  notifies :run, "ruby_block[install_erlang]", :before
 end
 
-bash "install_elixir" do 
+bash "install_elixir" do
   environment ({ 'HOME' => ::Dir.home("ubuntu"), 'USER' => "ubuntu" })
-  user "ubuntu" 
+  user "ubuntu"
   code "#{node["asdf"]["asdf_location"]} install elixir #{node["asdf"]["elixir_version"]}"
-  notifies :run, "ruby_block[install_elixir]", :before      
+  notifies :run, "ruby_block[install_elixir]", :before
 end
 
-bash "root_install_elixir" do 
+bash "root_install_elixir" do
   code "#{node["asdf"]["root_asdf_location"]} install elixir #{node["asdf"]["elixir_version"]}"
-  notifies :run, "ruby_block[install_elixir]", :before      
+  notifies :run, "ruby_block[install_elixir]", :before
 end
 
-bash "install_ruby" do  
+bash "install_ruby" do
   environment ({ 'HOME' => ::Dir.home("ubuntu"), 'USER' => "ubuntu" })
   user "ubuntu"
   code "#{node["asdf"]["asdf_location"]} install ruby #{node["asdf"]["ruby_version"]}"
-  notifies :run, "ruby_block[install_ruby]", :before       
+  notifies :run, "ruby_block[install_ruby]", :before
 end
 
 # Common version used - this will go away in the future
-bash "install_ruby" do  
+bash "install_ruby" do
   environment ({ 'HOME' => ::Dir.home("ubuntu"), 'USER' => "ubuntu" })
   user "ubuntu"
   code "#{node["asdf"]["asdf_location"]} install ruby 2.3.1"
-  notifies :run, "ruby_block[install_ruby]", :before       
+  notifies :run, "ruby_block[install_ruby]", :before
 end
 
-bash "root_install_ruby" do  
+bash "root_install_ruby" do
   code "#{node["asdf"]["root_asdf_location"]} install ruby #{node["asdf"]["ruby_version"]}"
-  notifies :run, "ruby_block[install_ruby]", :before       
+  notifies :run, "ruby_block[install_ruby]", :before
+end
+
+bash "install_golang" do
+  environment ({ 'HOME' => ::Dir.home("ubuntu"), 'USER' => "ubuntu" })
+  user "ubuntu"
+  code "#{node["asdf"]["asdf_location"]} install golang #{node["asdf"]["golang_version"]}"
+  notifies :run, "ruby_block[install_golang]", :before
+end
+
+bash "root_install_golang" do
+  code "#{node["asdf"]["root_asdf_location"]} install golang #{node["asdf"]["golang_version"]}"
+  notifies :run, "ruby_block[install_golang]", :before
 end
