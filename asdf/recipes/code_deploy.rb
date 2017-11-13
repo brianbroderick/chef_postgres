@@ -1,12 +1,12 @@
 include_recipe "asdf::log_output"
 
-bash "download_codedeploy" do  
+bash "download_codedeploy" do
   environment ({ 'HOME' => ::Dir.home("ubuntu"), 'USER' => "ubuntu" })
   cwd "/home/ubuntu"
-  user "ubuntu"  
+  user "ubuntu"
   code "wget https://aws-codedeploy-#{node['asdf']['aws_region']}.s3.amazonaws.com/latest/install
   chmod +x ./install"
-  notifies :run, "ruby_block[install_codedeploy]", :before      
+  notifies :run, "ruby_block[install_codedeploy]", :before
 end
 
 bash "install_codedeploy" do
@@ -17,16 +17,24 @@ bash "install_codedeploy" do
 end
 
 # where the code will live
-directory "/code" do  
+directory "/code" do
   action :create
   owner "ubuntu"
-  group "ubuntu"  
+  group "ubuntu"
+  recursive true
+end
+
+# where the pg_log_shipper app will live
+directory "/projects/pg_log_shipper" do
+  action :create
+  owner "ubuntu"
+  group "ubuntu"
   recursive true
 end
 
 directory "/mnt/data/backups" do
   action :create
   owner "ubuntu"
-  group "ubuntu"  
-  recursive true    
+  group "ubuntu"
+  recursive true
 end
