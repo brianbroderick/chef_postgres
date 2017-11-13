@@ -60,6 +60,6 @@ bash "add_plugins_for_root" do
   code "#{node["asdf"]["root_asdf_location"]} plugin-add erlang
         #{node["asdf"]["root_asdf_location"]} plugin-add elixir
         #{node["asdf"]["root_asdf_location"]} plugin-add ruby
-        #{node["asdf"]["asdf_location"]} plugin-add golang https://github.com/kennyp/asdf-golang.git"
+        #{node["asdf"]["root_asdf_location"]} plugin-add golang https://github.com/kennyp/asdf-golang.git"
   notifies :run, "ruby_block[add_plugins]", :before
 end
