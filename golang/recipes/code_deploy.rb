@@ -1,4 +1,4 @@
-include_recipe "asdf::log_output"
+include_recipe "golang::log_output"
 
 # uses service but is alot slower than checking for a file
 # if ! service --status-all 2>&1 | grep -Fq codedeploy-agent; then

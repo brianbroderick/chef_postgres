@@ -1,3 +1,5 @@
+include_recipe "asdf::log_output"
+
 package "automake"
 package "autoconf"
 package "build-essential"

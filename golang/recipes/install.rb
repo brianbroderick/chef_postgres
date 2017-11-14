@@ -1,3 +1,5 @@
+include_recipe "golang::log_output"
+
 # Cache directory
 directory "/root/cache" do
   action :create
