@@ -28,11 +28,6 @@ ruby_block "install_ruby" do
   action :nothing
 end
 
-ruby_block "install_golang" do
-  block { ::Chef::Log.info("** Installing Golang **") }
-  action :nothing
-end
-
 ruby_block "install_hex" do
   block { ::Chef::Log.info("** Installing Hex **") }
   action :nothing
@@ -50,11 +45,6 @@ end
 
 ruby_block "global_ruby" do
   block { ::Chef::Log.info("** Setting Global Ruby **") }
-  action :nothing
-end
-
-ruby_block "global_golang" do
-  block { ::Chef::Log.info("** Setting Global Golang **") }
   action :nothing
 end
 

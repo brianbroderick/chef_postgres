@@ -20,7 +20,6 @@ package "nodejs-legacy"
 package "npm"
 package "rabbitmq-server"
 package "redis-server"
-package "golang-go"
 
 version = node["asdf"]["postgres_version"]
 codename = node["asdf"]["release_apt_codename"]
