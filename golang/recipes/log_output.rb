@@ -3,15 +3,13 @@ ruby_block "install_codedeploy" do
   action :nothing
 end
 
-###
-
-ruby_block "global_golang" do
-  block { ::Chef::Log.info("** Setting Global Golang **") }
+ruby_block "install_golang" do
+  block { ::Chef::Log.info("** Installing Golang **") }
   action :nothing
 end
 
-ruby_block "install_golang" do
-  block { ::Chef::Log.info("** Installing Golang **") }
+ruby_block "add_golang_to_profile" do
+  block { ::Chef::Log.info("** Adding Golang PATH to profile **") }
   action :nothing
 end
 
