@@ -24,14 +24,6 @@ directory "/code" do
   recursive true
 end
 
-# where the pg_log_shipper app will live
-directory "/projects/pg_log_shipper" do
-  action :create
-  owner "ubuntu"
-  group "ubuntu"
-  recursive true
-end
-
 directory "/mnt/data/backups" do
   action :create
   owner "ubuntu"
