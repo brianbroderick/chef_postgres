@@ -21,6 +21,11 @@ ruby_block "log_stop_pg" do
   action :nothing
 end
 
+ruby_block "log_stop_redis" do
+  block { ::Chef::Log.info("** Stop Redis **") }
+  action :nothing
+end
+
 ruby_block "log_move_data_directory" do
   block { ::Chef::Log.info("** Moving Data Directory **") }
   action :nothing

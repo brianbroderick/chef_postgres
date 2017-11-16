@@ -25,6 +25,7 @@ end
 bash "add_golang_to_profile" do
   code "if ! cat /etc/profile | grep -q 'usr/local/go/bin'; then
     echo -e '\nexport PATH=$PATH:/usr/local/go/bin' >> /etc/profile
+    echo -e '\nexport PATH=$PATH:/home/ubuntu/go/bin' >> /etc/profile
   fi"
   notifies :run, "ruby_block[add_golang_to_profile]", :before
 end

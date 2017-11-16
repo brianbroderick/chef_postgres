@@ -20,7 +20,7 @@ default["chef_postgres"]["pg_config"]["backup_directory"] = if node["chef_postgr
                                                                  "/mnt/data/backups"
                                                                else
                                                                  "/backups"
-                                                               end                                                               
+                                                               end
 
 _, pg_pass, = ::Chef::Provider::DbUser.call(node, "pg_login")
 admin_user, admin_pass, admin_is_generated = ::Chef::Provider::DbUser.call(node, "admin_login")
@@ -32,12 +32,11 @@ default["chef_postgres"]["vars"]["admin_pass"] = admin_pass
 default["chef_postgres"]["vars"]["admin_is_generated"] = admin_is_generated
 default["chef_postgres"]["vars"]["repl_user"] = repl_user
 default["chef_postgres"]["vars"]["repl_pass"] = repl_pass
+default["chef_postgres"]["vars"]["admin_login_path"] = "/etc/postgresql/#{version}/main/admin_login"
+default["chef_postgres"]["vars"]["user_created"] = ::UserCreated.call
 
 default["sysctl"]["params"]["vm"]["swappiness"] = 1
 
 # Redislog
 default["chef_postgres"]["libs"]["shared"] = "decoderbufs"
 default["chef_postgres"]["libs"]["redislog_hosts"] = ""
-
-
-
