@@ -1,3 +1,5 @@
+include_recipe "golang::log_output"
+
 # For redislog
 package "libssl-dev"
 package "libkrb5-dev"
