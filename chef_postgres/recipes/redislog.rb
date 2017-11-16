@@ -1,4 +1,4 @@
-include_recipe "golang::log_output"
+include_recipe "chef_postgres::log_output"
 
 # For redislog
 package "libssl-dev"
