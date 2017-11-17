@@ -85,3 +85,8 @@ ruby_block "log_set_iptables" do
   block { ::Chef::Log.info("** Set IPTables **") }
   action :nothing
 end
+
+ruby_block "log_scripts_directory" do
+  block { ::Chef::Log.info("** Creating scripts Directory **") }
+  action :nothing
+end

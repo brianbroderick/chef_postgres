@@ -20,6 +20,7 @@ admin_is_generated = node["chef_postgres"]["vars"]["admin_is_generated"]
 repl_user = node["chef_postgres"]["vars"]["repl_user"]
 repl_pass = node["chef_postgres"]["vars"]["repl_pass"]
 backup_dir = node["chef_postgres"]["pg_config"]["backup_directory"]
+scripts_dir = node["chef_postgres"]["pg_config"]["scripts_directory"]
 user_created = node["chef_postgres"]["vars"]["user_created"]
 
 # Build this on the master so the standbys have the right settings
@@ -114,6 +115,15 @@ cookbook_file "Copy backup file" do
   owner "ubuntu"
   path "#{backup_dir}/pg_backup.sh"
   source "pg_backup.sh"
+  not_if { user_created }
+end
+
+cookbook_file "Copy remove_postgres_logs file" do
+  group "ubuntu"
+  mode "0775"
+  owner "ubuntu"
+  path "#{scripts_dir}/remove_postgres_logs.sh"
+  source "remove_postgres_logs.sh"
   not_if { user_created }
 end
 
