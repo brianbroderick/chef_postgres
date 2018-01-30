@@ -36,12 +36,12 @@
 # MODULES
 #------------------------------------------------------------------------------
 
-<% unless @config[:libs][:shared].empty? 
+<% unless @config[:libs][:shared].empty?
      shared = @config[:libs][:shared].is_a?(Array) ? @config[:libs][:shared].join(",") : @config[:libs][:shared] %>
 shared_preload_libraries = '<%= shared %>'
 <% end %>
 
-<% unless @config[:libs][:redislog_hosts].empty? 
+<% unless @config[:libs][:redislog_hosts].empty?
      redislog_hosts =  @config[:libs][:redislog_hosts].is_a?(Array) ? @config[:libs][:redislog_hosts].join(",") : @config[:libs][:redislog_hosts] %>
 redislog.hosts = '<%= @config[:libs][:redislog_hosts] %>'
 <% end %>
@@ -227,7 +227,7 @@ synchronous_commit = <%= @config[:optimization][:synchronous_commit] %>         
 #checkpoint_timeout = 5min              # range 30s-1d
 <%# This variable includes "max_wal_size =" since older versions called it "checkpoint_segments" %>
 <%= @config[:optimization][:checkpoint_segments_or_max_wal_size] %>
-#max_wal_size = 1GB  
+#max_wal_size = 1GB
 #min_wal_size = 80MB
 checkpoint_completion_target = <%= @config[:optimization][:checkpoint_completion_target] %>     # checkpoint target duration, 0.0 - 1.0
 #checkpoint_flush_after = 256kB         # measured in pages, 0 disables
@@ -282,7 +282,7 @@ wal_keep_segments = <%= @config[:optimization][:wal_keep_segments] %> # in logfi
 # - Master Server -
 
 # These settings are ignored on a standby server.
-# synchronous_standby_names = 's1'
+synchronous_standby_names = 's1'
 
 #synchronous_standby_names = '' # standby servers that provide sync rep
                                 # number of sync standbys and comma-separated list of application_name
@@ -475,7 +475,7 @@ log_disconnections = on ### default: off
 #log_error_verbosity = default          # terse, default, or verbose messages
 #log_hostname = off
 # RDS format: %t:%r:%u@%d:[%p]:
-# log_line_prefix = '%m [%p] %q%u@%d '                   
+# log_line_prefix = '%m [%p] %q%u@%d '
 log_line_prefix = '%t:%r:%u@%d:[%p]:'                    # special values:
                                         #   %a = application name
                                         #   %u = user name
@@ -687,4 +687,4 @@ deadlock_timeout = 5s # to avoid some deadlocking due to a slightly slower query
 # CUSTOMIZED OPTIONS
 #------------------------------------------------------------------------------
 
-# Add settings for extensions here                                        
+# Add settings for extensions here

@@ -87,7 +87,7 @@ end
 bash "compile_decoderbufs" do
   action :run
   code <<-EOF_CDB
-  git clone https://github.com/debezium/postgres-decoderbufs -b v0.5.1 --single-branch
+  git clone https://github.com/debezium/postgres-decoderbufs -b v0.7.1 --single-branch
   cd /postgres-decoderbufs
   make && make install
   cd /
