@@ -281,8 +281,9 @@ wal_keep_segments = <%= @config[:optimization][:wal_keep_segments] %> # in logfi
 
 # - Master Server -
 
+### The synchronous_standby_names cannot be set until the standby has been set up, or it will block any writes.
 # These settings are ignored on a standby server.
-synchronous_standby_names = 's1'
+# synchronous_standby_names = 's1'
 
 #synchronous_standby_names = '' # standby servers that provide sync rep
                                 # number of sync standbys and comma-separated list of application_name
