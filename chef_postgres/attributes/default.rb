@@ -8,6 +8,7 @@ default["chef_postgres"]["workload"] = "oltp"
 
 version = node["chef_postgres"]["version"]
 
+default["chef_postgres"]["pg_config"]["mount_drive"] = "/dev/xvda1"
 default["chef_postgres"]["pg_config"]["config_directory"] = "/etc/postgresql/#{version}/main"
 default["chef_postgres"]["pg_config"]["original_data_directory"] = "/var/lib/postgresql/#{version}/main"
 default["chef_postgres"]["pg_config"]["data_directory_on_separate_drive"] = true
