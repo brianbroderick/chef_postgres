@@ -173,6 +173,7 @@ class Chef
         node["filesystem"].each do |key, value|
           kb = value['kb_available'].to_i if value['kb_available'].to_i > kb
         end
+        kb
       end
 
       def checkpoint_segments_or_max_wal_size
