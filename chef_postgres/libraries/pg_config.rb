@@ -160,7 +160,7 @@ class Chef
                      mixed: 0.50,
                      desktop: 0.25,
         }.fetch(workload)
-          (node["filesystem"]["by_device"]["#{rootdrive}"]["kb_available"].to_f * modifier / 1024 / 16).round
+          (node["filesystem"]["by_device"][rootdrive]["kb_available"].to_f * modifier / 1024 / 16).round
       end
 
       def checkpoint_segments_or_max_wal_size
