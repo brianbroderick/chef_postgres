@@ -16,7 +16,8 @@ To change the default settings, pass in custom JSON.  These are the defaults:
     "release_apt_codename": "codename_reported_by_ec2",
     "version": "9.6",
     "workload": "oltp",
-    "data_device": "/dev/xvdl"
+    "data_device": "/dev/xvdl",
+    "rootdrive": "/dev/xvda1"
     "s3":  {
       "region": "",
       "bucket": "",

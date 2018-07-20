@@ -5,7 +5,7 @@
 class Chef
   class Provider
     class PgConfig < Chef::Provider::LWRPBase
-      attr_reader :node, :workload, :version
+      attr_reader :node, :workload, :version, :rootdrive
 
       def self.call(*args)
         new(*args).call
@@ -15,6 +15,7 @@ class Chef
         @node = node
         @workload = node["chef_postgres"]["workload"].to_sym
         @version = node["chef_postgres"]["version"]
+        @rootdrive = node["chef_postgres"]["rootdrive"]
         node.default["chef_postgres"]["pg_config"]["random_page_cost"] = 3.0
         node.default["chef_postgres"]["pg_config"]["synchronous_commit"] = "on"
       end
@@ -154,15 +155,13 @@ class Chef
       def wal_keep_segments
         # Convert to modifier % of available disk space on log drive in MB, then divide by 16MB
         # If log location becomes configurable, the drive needs to also become configurable
-        puts node["filesystem"]["by_device"]
         modifier = { web: 0.50,
                      oltp: 0.50,
                      dw: 0.50,
                      mixed: 0.50,
                      desktop: 0.25,
         }.fetch(workload)
-          (node["filesystem"]["by_device"]["/dev/nvme0n1p1"]["kb_available"].to_f * modifier / 1024 / 16).round
-          #(node["filesystem"]["by_device"]["/dev/xvda1"]["kb_available"].to_f * modifier / 1024 / 16).round
+          (node["filesystem"]["by_device"]["#{rootdrive}"]["kb_available"].to_f * modifier / 1024 / 16).round
       end
 
       def checkpoint_segments_or_max_wal_size

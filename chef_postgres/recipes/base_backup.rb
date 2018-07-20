@@ -28,23 +28,11 @@ end
 
 
 bash "create_base_backup" do
-  if node["chef_postgres"]["version"] == 10
     code <<-EOF_CBB
     rm -rf #{backup_dir}/base_backup/*
     pg_basebackup -d 'host=localhost user=#{repl_user} password=#{repl_pass}' -D #{backup_dir}/base_backup
     tar -C #{backup_dir} -czf #{backup_dir}/base_backup.tgz #{backup_dir}/base_backup/
     EOF_CBB
-    action :run
-    notifies :run, "ruby_block[log_create_base_backup]", :before
-  else
-    code <<-EOF_CBB
-    rm -rf #{backup_dir}/base_backup/*
-    pg_basebackup -d 'host=localhost user=#{repl_user} password=#{repl_pass}' -D #{backup_dir}/base_backup --xlog-method=stream
-    tar -C #{backup_dir} -czf #{backup_dir}/base_backup.tgz #{backup_dir}/base_backup/
-    EOF_CBB
-    action :run
-    notifies :run, "ruby_block[log_create_base_backup]", :before
-  end
 end
 
 ruby_block "s3_upload_backup" do
