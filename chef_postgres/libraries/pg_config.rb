@@ -112,7 +112,6 @@ class Chef
         # Estimate of how much memory is available for disk caching by the operating system
         # and within the database itself, after taking into account what's used by the OS itself
         # and other applications
-
         @effective_cache ||= (memory > 16384) ? effective_cache_size_large : effective_cache_size_small
       end
 
