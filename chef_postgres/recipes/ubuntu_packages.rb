@@ -4,15 +4,20 @@ version = node["chef_postgres"]["version"]
 
 ::Chef::Log.info("** Install essential build tools **")
 
+apt_update
+
 # For redislog
 package "libssl-dev"
 package "libkrb5-dev"
 package "libhiredis-dev"
 package "redis-server"
-
 # For Debezium / Decoderbufs
 
 package "software-properties-common" do
+  options "--no-install-recommends"
+end
+
+package "s3cmd" do
   options "--no-install-recommends"
 end
 
@@ -53,7 +58,7 @@ package "postgresql-client-#{version}"
 package "postgresql-server-dev-#{version}"
 package "postgresql-contrib-#{version}"
 package "postgis"
-package "postgresql-#{version}-postgis-2.3"
+package "postgresql-#{version}-postgis-2.4"
 package "postgresql-#{version}-citus"
 package "postgresql-#{version}-partman"
 package "postgresql-#{version}-repack"
@@ -119,5 +124,3 @@ bash "compile_redislog" do
   EOF_CDB
   notifies :run, "ruby_block[log_compile_redislog]", :before
 end
-
-
