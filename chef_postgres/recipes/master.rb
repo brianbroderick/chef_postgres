@@ -105,7 +105,7 @@ bash "create_base_backup" do
     else
       code <<-EOF_CBB
       rm -rf #{backup_dir}/base_backup/*
-      pg_basebackup -d 'host=localhost user=#{repl_user} password=#{repl_pass}' -D #{backup_dir}/base_backup --xlog-method=stream
+      pg_basebackup -d 'host=localhost user=#{repl_user} password=#{repl_pass}' -D #{backup_dir}/base_backup --wal-method=stream
       tar -C #{backup_dir} -czf #{backup_dir}/base_backup.tgz #{backup_dir}/base_backup/
       EOF_CBB
       not_if { user_created }

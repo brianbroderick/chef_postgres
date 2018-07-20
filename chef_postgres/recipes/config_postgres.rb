@@ -35,7 +35,7 @@ template "postgresql.conf" do
                                 pg_node: node["chef_postgres"]["pg_config"]["pg_node"] },
                         libs: { shared: node["chef_postgres"]["libs"]["shared"],
                                 redislog_hosts: node["chef_postgres"]["libs"]["redislog_hosts"] ,
-                                version: node["chef_postgres"]["version"]}     # pg-logs.ielpdo.0001.usw2.cache.amazonaws.com
+                                version: node["chef_postgres"]["version"]}     
                               } })
 end
 

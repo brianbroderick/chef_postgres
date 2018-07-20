@@ -25,8 +25,6 @@ template "recovery_conf.source" do
                         hostname: node["ec2"]["local_hostname"],
                         standby: node["chef_postgres"]["pg_config"]["cluster_type"] } })
 end
-#create if block for version 10 vs versoin 9.6
-
 
 
 bash "create_base_backup" do

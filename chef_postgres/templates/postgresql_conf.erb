@@ -264,7 +264,7 @@ archive_command = 'cd .'
 
 # - Sending Server(s) -
 
-# Set these on the master and on any standby that will send replication data.
+# Extra wal_senders and replication_slots to allow logical replication
 
 <% if @config[:repl][:pg_node] == "master" && %w(warm_standby hot_standby).include?(@config[:repl][:cluster_type]) %>
 max_wal_senders = 25          # number of nodes + 2 (for possible reconnection attempts)
