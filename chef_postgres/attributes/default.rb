@@ -5,10 +5,11 @@ default["chef_postgres"]["release_apt_codename"] = node["lsb"]["codename"]
 default["chef_postgres"]["version"] = "9.6"
 default["chef_postgres"]["rh_version"] = node["chef_postgres"]["version"].gsub(/[^0-9]/, "")
 default["chef_postgres"]["workload"] = "oltp"
+default["chef_postgres"]["data_device"] = "/dev/xvdl"
+default["chef_postgres"]["rootdrive"] = "/dev/nvme0n1p1"
 
 version = node["chef_postgres"]["version"]
 
-default["chef_postgres"]["pg_config"]["mount_drive"] = "/dev/xvda1"
 default["chef_postgres"]["pg_config"]["config_directory"] = "/etc/postgresql/#{version}/main"
 default["chef_postgres"]["pg_config"]["original_data_directory"] = "/var/lib/postgresql/#{version}/main"
 default["chef_postgres"]["pg_config"]["data_directory_on_separate_drive"] = true

@@ -5,7 +5,7 @@
 class Chef
   class Provider
     class PgConfig < Chef::Provider::LWRPBase
-      attr_reader :node, :workload, :mount_drive
+      attr_reader :node, :workload, :version, :rootdrive
 
       def self.call(*args)
         new(*args).call
@@ -14,8 +14,8 @@ class Chef
       def initialize(node)
         @node = node
         @workload = node["chef_postgres"]["workload"].to_sym
-        @mount_drive = node["chef_postgres"]["pg_config"]["mount_drive"]
-
+        @version = node["chef_postgres"]["version"]
+        @rootdrive = node["chef_postgres"]["rootdrive"]
         node.default["chef_postgres"]["pg_config"]["random_page_cost"] = 3.0
         node.default["chef_postgres"]["pg_config"]["synchronous_commit"] = "on"
       end
@@ -112,7 +112,6 @@ class Chef
         # Estimate of how much memory is available for disk caching by the operating system
         # and within the database itself, after taking into account what's used by the OS itself
         # and other applications
-
         @effective_cache ||= (memory > 16384) ? effective_cache_size_large : effective_cache_size_small
       end
 
@@ -155,25 +154,13 @@ class Chef
       def wal_keep_segments
         # Convert to modifier % of available disk space on log drive in MB, then divide by 16MB
         # If log location becomes configurable, the drive needs to also become configurable
-
         modifier = { web: 0.50,
                      oltp: 0.50,
                      dw: 0.50,
                      mixed: 0.50,
                      desktop: 0.25,
         }.fetch(workload)
-
-        (kb_available.to_f * modifier / 1024 / 16).round
-      end
-
-      def kb_available
-        return node["filesystem"][mount_drive]["kb_available"] unless node["filesystem"][mount_drive].nil?
-
-        kb = 0
-        node["filesystem"].each do |key, value|
-          kb = value['kb_available'].to_i if value['kb_available'].to_i > kb
-        end
-        kb
+          (node["filesystem"]["by_device"][rootdrive]["kb_available"].to_f * modifier / 1024 / 16).round
       end
 
       def checkpoint_segments_or_max_wal_size
@@ -243,7 +230,6 @@ class Chef
 
         node["chef_postgres"]["pg_config"]["synchronous_commit"]
       end
-
       def version
         node["chef_postgres"]["version"]
       end
