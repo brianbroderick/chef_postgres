@@ -104,7 +104,7 @@ end
 bash "compile_hypopg" do
   action :run
   code <<-EOF_CDB
-  git clone https://github.com/dalibo/hypopg.git -b master --single-branch
+  git clone https://github.com/HypoPG/hypopg -b master --single-branch
   cd /hypopg
   make install
   cd /
